@@ -29,7 +29,7 @@ class User extends Authenticatable implements JWTSubject
         'id_Interface',
         'id_City',
         'id_Country',
-        //'Avatar',
+        'Avatar',
         'Privilege'
         
     ];

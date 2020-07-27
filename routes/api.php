@@ -29,6 +29,7 @@ Route::group([
     Route::put('update/{user}', 'UserController@adminUpdate');
     Route::delete('delete/{user}', 'UserController@delete');
 
-    //Route::get('image', 'ImageController@getImage');
+    Route::get('image', 'ImageController@getImage');
+    Route::post('image', 'ImageController@uploadImage');
 });
 

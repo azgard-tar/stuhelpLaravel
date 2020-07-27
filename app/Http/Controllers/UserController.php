@@ -27,24 +27,17 @@ class UserController extends Controller
         return response()->json( ['error' => $this->errorPerm], 403 );
     }
     public function userUpdate( Request $request ){
-
-        /*$request->validate([
-            'email'    => 'required|email',
+        $request->validate([
+            'email'    => 'email|unique:users',
             'password' => [
-                'required',
                 'string',
                 'min:10',             // must be at least 10 characters in length
                 'regex:/[a-z]/',      // must contain at least one lowercase letter
                 'regex:/[A-Z]/',      // must contain at least one uppercase letter
                 'regex:/[0-9]/',      // must contain at least one digit
                 'regex:/[@$!%*#?&]/', // must contain a special character
-            ],
+            ]
         ]);
-
-        if( $request->hasFile('Avatar')){
-            $request->validate([ 'Avatar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048']);
-            auth()-user()->Avatar = $request->file('Avatar')->store('images');
-        }*/
         if( auth()->user()->Privilege <= 0 )
             auth()->user()->update( $request->except(
                 ['Privilege','Login','email_verified_at','created_at','updated_at','id_Group','LastLogin','ShopInfo','Coins','Avatar']) 
@@ -54,10 +47,10 @@ class UserController extends Controller
         return response()->json( auth()->user(), 200 );
     }
     public function adminUpdate( Request $request, User $user ){
-        if( auth()->user()->id == $user->id || auth()->user()->Privilege <= 0 )
+        if( $request->id == $user->id || $request->Privilege <= 0 )
             return $this->userUpdate( $request );
         else
-            $user->update( $request->all() );
+            $user->update( $request->except('Avatar') );
         return response()->json( $user, 200 );
     }
     public function delete( User $user ){

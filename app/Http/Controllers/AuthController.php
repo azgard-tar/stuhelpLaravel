@@ -38,17 +38,18 @@ class AuthController extends Controller
      */
     public function registration()
     {
-        $login = request('login');
-        $email = request('email');
-        $password = request('password');
+        //$login = request('login');
+        //$email = request('email');
+        //$password = request('password');
 
-        /*$inputs = [
-            'login'    => 'asd',
-            'email'    => 'foo',
-            'password' => 'bar',
+        $inputs = [
+            'Login'    => request('login'),
+            'email'    => request('email'),
+            'password' => request('password'),
         ];
     
         $rules = [
+            'Login'    => 'required|unique:users|max:64',
             'email'    => 'required|email',
             'password' => [
                 'required',
@@ -64,14 +65,14 @@ class AuthController extends Controller
         $validation = \Validator::make( $inputs, $rules );
     
         if ( $validation->fails() ) {
-            print_r( $validation->errors()->all() );
-        }*/
+            return response()->json(['error' => $validation->errors()->all() ]);
+        }
 
 
         $user = new User();
-        $user->Login = $login;
-        $user->email = $email;
-        $user->password = Hash::make($password);
+        $user->Login = $inputs->Login;
+        $user->email = $inputs->email;
+        $user->password = Hash::make($inputs->password);
         $user->save();
 
         return response()->json(['message' => 'Successfully registration!']);
