@@ -14,18 +14,6 @@ class UserController extends Controller
         $this->middleware('auth:api');
     }
     
-    public function getAll( Request $request ){
-        if( $request->user()->Privilege > 0 )
-            return response()->json( User::all(),200 );
-        return response()->json( ['error' => $this->errorPerm ], 403 );
-    }
-    public function getOne( Request $request, User $user = null ){
-        if( $request->user()->Privilege == 0 || is_null( $user ) )
-            return response()->json( $request->user(), 200);
-        else if( $request->user()->Privilege > 0 && ! is_null( $user )  )
-            return response()->json( $user, 200 );
-        return response()->json( ['error' => $this->errorPerm], 403 );
-    }
     public function userUpdate( Request $request ){
         $request->validate([
             'email'    => 'email|unique:users',
@@ -46,26 +34,12 @@ class UserController extends Controller
             auth()->user()->update( $request->except('Avatar') );
         return response()->json( auth()->user(), 200 );
     }
-    public function adminUpdate( Request $request, User $user ){
-        if( $request->id == $user->id || $request->Privilege <= 0 )
-            return $this->userUpdate( $request );
-        else
-            $user->update( $request->except('Avatar') );
-        return response()->json( $user, 200 );
-    }
-    public function delete( User $user ){
-        if( ! is_null(auth()->user()) || auth()->user()->Privilege <= 0 ){
-            if(  is_null( $user ) || $user->id == auth()->user()->id ){
-                auth()->user()->delete();
+    
+    public function delete( Request $request ){
+            if( auth()->check() ){
+                $request->delete();
                 return response()->json( null, 204 );
             }
-            return response()->json( ['error' => $this->errorPerm], 403 );
-        }
-        else if( ! is_null(auth()->user()) || auth()->user()->Privilege > 0 )
-            $user->delete();
-        else if( is_null(auth()->user()) )
             return response()->json( ['error' => 'Unauthorized'], 401 );
-        else
-            return response()->json( ['error' => $this->errorPerm], 403 );
     }
 }

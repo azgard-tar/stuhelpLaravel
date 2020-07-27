@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,19 +18,30 @@ use Illuminate\Support\Facades\Route;
 Route::group([
     'prefix' => 'auth'
 ], function () {
-    Route::get('login', 'AuthController@login');
+    Route::get('login', 'AuthController@login')->name('login');
     Route::post('registration', 'AuthController@registration');
     Route::get('logout', 'AuthController@logout');
     Route::get('refresh', 'AuthController@refresh');
     Route::get('me', 'AuthController@me');
+});
 
-    Route::get('allUsers', 'UserController@getAll');
-    Route::get('oneUser/{user}', 'UserController@getOne');
+Route::group([
+    'prefix' => 'user'
+], function () {
     Route::put('update', 'UserController@userUpdate');
-    Route::put('update/{user}', 'UserController@adminUpdate');
-    Route::delete('delete/{user}', 'UserController@delete');
-
     Route::get('image', 'ImageController@getImage');
     Route::post('image', 'ImageController@uploadImage');
+    Route::delete('delete', 'UserController@delete');
+});
+
+Route::group([
+    'prefix' => 'admin'
+], function () {
+    if( auth()->check() && 3 == auth()->user()->Privilege ){
+        Route::get('user/{user}', 'AdminController@getOne');
+        Route::get('user', 'AdminController@getAll');
+        Route::put('update/{user}', 'AdminController@update');
+        Route::delete('delete/{user}', 'AdminController@delete');
+    }
 });
 

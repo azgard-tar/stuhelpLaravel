@@ -70,9 +70,9 @@ class AuthController extends Controller
 
 
         $user = new User();
-        $user->Login = $inputs->Login;
-        $user->email = $inputs->email;
-        $user->password = Hash::make($inputs->password);
+        $user->Login = $inputs['Login'];
+        $user->email = $inputs['email'];
+        $user->password = Hash::make($inputs['password']);
         $user->save();
 
         return response()->json(['message' => 'Successfully registration!']);
