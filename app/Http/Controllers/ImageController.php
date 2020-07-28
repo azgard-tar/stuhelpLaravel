@@ -12,19 +12,19 @@ class ImageController extends Controller
     {
         $this->middleware('auth:api');
     }
-    public function getImage( Request $request )
+
+    public static function getImage( Request $request, User $user = null )
     {
-        return response()->file( storage_path('app/') . $request->user()->Avatar );
+        return response()->file( storage_path('app/') . ( ( is_null($user) ) ? $request->user()->Avatar : $user->Avatar ) );
     }
 
-    public function uploadImage( Request $request )
-    {
+    public static function uploadImage( Request $request, User $otherUser = null ){
+        $user = User::findOrFail( ( is_null($otherUser) ) ? auth()->user()->id : $otherUser->id );
         if( $request->hasFile('Avatar')){
             $request->validate([
                 'Avatar' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
-            $user = User::findOrFail(auth()->user()->id);
-            if( file_exists( storage_path('app/') . $user->Avatar ) )
+            if( file_exists( storage_path('app/') . $user->Avatar ) && $user->Avatar !== 'images/none.jpg' )
                 unlink( storage_path('app/') . $user->Avatar );
             $user->Avatar = $request->file('Avatar')->store('images');
             $user->save();

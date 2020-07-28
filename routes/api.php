@@ -28,10 +28,12 @@ Route::group([
 Route::group([
     'prefix' => 'user'
 ], function () {
-    Route::put('update', 'UserController@userUpdate');
-    Route::get('image', 'ImageController@getImage');
-    Route::post('image', 'ImageController@uploadImage');
-    Route::delete('delete', 'UserController@delete');
+    if( auth()->check() ){
+        Route::put('update', 'UserController@userUpdate');
+        Route::get('image', 'UserController@userGetImage');
+        Route::post('image', 'UserController@userUploadImage');
+        Route::delete('delete', 'UserController@delete');
+    }
 });
 
 Route::group([
@@ -42,6 +44,8 @@ Route::group([
         Route::get('user', 'AdminController@getAll');
         Route::put('update/{user}', 'AdminController@update');
         Route::delete('delete/{user}', 'AdminController@delete');
+        Route::get('image/{user}', 'AdminController@adminGetImage');
+        Route::post('image/{user}', 'AdminController@adminUploadImage');
     }
 });
 

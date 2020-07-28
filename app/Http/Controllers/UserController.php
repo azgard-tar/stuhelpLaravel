@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use App\Http\Controllers\ImageController;
 
 class UserController extends Controller
 {
@@ -26,20 +27,24 @@ class UserController extends Controller
                 'regex:/[@$!%*#?&]/', // must contain a special character
             ]
         ]);
-        if( auth()->user()->Privilege <= 0 )
-            auth()->user()->update( $request->except(
-                ['Privilege','Login','email_verified_at','created_at','updated_at','id_Group','LastLogin','ShopInfo','Coins','Avatar']) 
-            );
-        else
-            auth()->user()->update( $request->except('Avatar') );
+        auth()->user()->update( $request->except(
+            ['Privilege','Login','email_verified_at','created_at','updated_at','id_Group','LastLogin','ShopInfo','Coins','Avatar']) 
+        );
         return response()->json( auth()->user(), 200 );
     }
     
     public function delete( Request $request ){
-            if( auth()->check() ){
-                $request->delete();
-                return response()->json( null, 204 );
-            }
-            return response()->json( ['error' => 'Unauthorized'], 401 );
+        auth()->user()->delete();
+        return response()->json( null, 204 );
+    }
+
+    public function userGetImage( Request $request )
+    {
+        return ImageController::getImage( $request );
+    }
+
+    public function userUploadImage( Request $request )
+    {
+        return ImageController::uploadImage( $request );
     }
 }
