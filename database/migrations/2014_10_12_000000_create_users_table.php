@@ -31,7 +31,7 @@ class CreateUsersTable extends Migration
             $table->integer('id_Interface')->nullable();
             $table->integer('id_City')->nullable();
             $table->integer('id_Country')->nullable();
-            $table->integer('Privilege')->default(0);
+            $table->integer('Privilege')->default(1);
             $table->string('Avatar',128)->default('images/none.jpg');
         });
     }

@@ -28,24 +28,37 @@ Route::group([
 Route::group([
     'prefix' => 'user'
 ], function () {
-    if( auth()->check() ){
-        Route::put('update', 'UserController@userUpdate');
-        Route::get('image', 'UserController@userGetImage');
-        Route::post('image', 'UserController@userUploadImage');
-        Route::delete('delete', 'UserController@delete');
-    }
+    Route::put('update', 'UserController@userUpdate');
+    Route::delete('delete', 'UserController@delete');
+
+    Route::get('image', 'UserController@userGetImage');
+    Route::post('image', 'UserController@userUploadImage');
+    
+    Route::post('event','EventController@addEvent'); // C
+    Route::get('event/{event}','EventController@getOne'); // R
+    Route::get('event','EventController@getUsersEvents');
+    Route::put('event/{event}','EventController@updateEvent'); // U
+    Route::delete('event/{event}','EventController@deleteEvent'); // D
+
+    Route::get('privilege', 'PrivilegeController@getPriv');
 });
 
 Route::group([
     'prefix' => 'admin'
 ], function () {
-    if( auth()->check() && 3 == auth()->user()->Privilege ){
+    if( auth()->check() && 4 == auth()->user()->Privilege ){
         Route::get('user/{user}', 'AdminController@getOne');
         Route::get('user', 'AdminController@getAll');
         Route::put('update/{user}', 'AdminController@update');
         Route::delete('delete/{user}', 'AdminController@delete');
+
         Route::get('image/{user}', 'AdminController@adminGetImage');
         Route::post('image/{user}', 'AdminController@adminUploadImage');
+
+        Route::get('event/{user}','EventController@getUsersEvents');
+
+        Route::get('privilege', 'PrivilegeController@getAllPriv');
+        Route::get('privilege/{privilege}', 'PrivilegeController@getPriv');
     }
 });
 

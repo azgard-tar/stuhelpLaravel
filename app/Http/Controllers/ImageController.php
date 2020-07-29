@@ -18,17 +18,17 @@ class ImageController extends Controller
         return response()->file( storage_path('app/') . ( ( is_null($user) ) ? $request->user()->Avatar : $user->Avatar ) );
     }
 
-    public static function uploadImage( Request $request, User $otherUser = null ){
-        $user = User::findOrFail( ( is_null($otherUser) ) ? auth()->user()->id : $otherUser->id );
+    public static function uploadImage( Request $request, User $user = null ){
+        $currentUser = User::findOrFail( ( is_null($user) ) ? auth()->user()->id : $user->id );
         if( $request->hasFile('Avatar')){
             $request->validate([
                 'Avatar' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
-            if( file_exists( storage_path('app/') . $user->Avatar ) && $user->Avatar !== 'images/none.jpg' )
-                unlink( storage_path('app/') . $user->Avatar );
-            $user->Avatar = $request->file('Avatar')->store('images');
-            $user->save();
-            return response()->file( storage_path('app/') . $user->Avatar );
+            if( file_exists( storage_path('app/') . $currentUser->Avatar ) && $currentUser->Avatar !== 'images/none.jpg' )
+                unlink( storage_path('app/') . $currentUser->Avatar );
+            $currentUser->Avatar = $request->file('Avatar')->store('images');
+            $currentUser->save();
+            return response()->file( storage_path('app/') . $currentUser->Avatar );
         }
         return response()->json(['error' => 'Data not found'],404);
     }
