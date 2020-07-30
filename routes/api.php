@@ -58,6 +58,9 @@ Route::group([
     Route::delete('theme/{theme}','ThemeController@deleteTheme'); // D
 
     Route::get('group', 'GroupController@getGroupStudents');
+
+    Route::get('university/{university}', 'UniversityController@getOneUni');
+    Route::get('university', 'UniversityController@getAllUni');
 });
 
 Route::group([
@@ -79,6 +82,10 @@ Route::group([
         Route::post('group', 'GroupController@createGroup');
         Route::put('group/{group}', 'GroupController@updateGroup');
         Route::delete('group/{group}', 'GroupController@deleteGroup');
+
+        Route::post('university','UniversityController@createUni');
+        Route::put('university/{university}','UniversityController@updateUni');
+        Route::delete('university/{university}','UniversityController@deleteUni');
     }
 });
 
