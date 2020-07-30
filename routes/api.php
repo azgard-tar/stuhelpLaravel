@@ -61,6 +61,12 @@ Route::group([
 
     Route::get('university/{university}', 'UniversityController@getOneUni');
     Route::get('university', 'UniversityController@getAllUni');
+
+    Route::get('country/{country}', 'CountryController@getOneCountry');
+    Route::get('country', 'CountryController@getAllCountry');
+
+    Route::get('city/{city}', 'CityController@getOneCity');
+    Route::get('city', 'CityController@getAllCity');
 });
 
 Route::group([
@@ -86,6 +92,14 @@ Route::group([
         Route::post('university','UniversityController@createUni');
         Route::put('university/{university}','UniversityController@updateUni');
         Route::delete('university/{university}','UniversityController@deleteUni');
+
+        Route::post('country','CountryController@createCountry');
+        Route::put('country/{country}','CountryController@updateCountry');
+        Route::delete('country/{country}','CountryController@deleteCountry');
+
+        Route::post('city','CityController@createCity');
+        Route::put('city/{city}','CityController@updateCity');
+        Route::delete('city/{city}','CityController@deleteCity');
     }
 });
 
