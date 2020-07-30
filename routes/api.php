@@ -41,12 +41,51 @@ Route::group([
     Route::delete('event/{event}','EventController@deleteEvent'); // D
 
     Route::get('privilege', 'PrivilegeController@getPriv');
+
+    Route::post('discipline','DisciplineController@addDisc'); // C
+    Route::get('discipline','DisciplineController@getUserDisc'); // R
+    Route::put('discipline/{discipline}','DisciplineController@updateDisc'); // U
+    Route::delete('discipline/{discipline}','DisciplineController@deleteDisc'); // D
+
+    Route::post('subject','SubjectController@addSubj'); // C
+    Route::get('subject','SubjectController@getUserSubjects'); // R
+    Route::put('subject/{subject}','SubjectController@updateSubj'); // U
+    Route::delete('subject/{subject}','SubjectController@deleteSubj'); // D
+
+    Route::post('theme','ThemeController@addTheme'); // C
+    Route::get('theme','ThemeController@getUserThemes'); // R
+    Route::put('theme/{theme}','ThemeController@updateTheme'); // U
+    Route::delete('theme/{theme}','ThemeController@deleteTheme'); // D
+
+    Route::get('group', 'GroupController@getGroupStudents');
+});
+
+Route::group([
+    'prefix' => 'headman'
+], function () {
+    if( auth()->check() &&   ( 2 <= auth()->user()->Privilege 
+    || 4 >= auth()->user()->Privilege ) ){ // headman, moder, admin
+        Route::put('group', 'GroupController@updateGroup');
+    }
+});
+
+Route::group([
+    'prefix' => 'moder'
+], function () {
+    if( auth()->check() && ( 3 == auth()->user()->Privilege
+    || 4 == auth()->user()->Privilege ) ){ // moder, admin
+        Route::get('group/{group}', 'GroupController@getGroupStudents');
+        Route::get('group', 'GroupController@getGroups');
+        Route::post('group', 'GroupController@createGroup');
+        Route::put('group/{group}', 'GroupController@updateGroup');
+        Route::delete('group/{group}', 'GroupController@deleteGroup');
+    }
 });
 
 Route::group([
     'prefix' => 'admin'
 ], function () {
-    if( auth()->check() && 4 == auth()->user()->Privilege ){
+    if( auth()->check() && 4 == auth()->user()->Privilege ){ // for admins
         Route::get('user/{user}', 'AdminController@getOne');
         Route::get('user', 'AdminController@getAll');
         Route::put('update/{user}', 'AdminController@update');
@@ -59,6 +98,10 @@ Route::group([
 
         Route::get('privilege', 'PrivilegeController@getAllPriv');
         Route::get('privilege/{privilege}', 'PrivilegeController@getPriv');
+
+        Route::get('discipline/{user}','DisciplineController@getUserDisc'); // R
+        Route::get('subject/{user}','SubjectController@getUserSubjects'); // R
+        Route::get('theme/{user}','ThemeController@getUserThemes'); // R
     }
 });
 

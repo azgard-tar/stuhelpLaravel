@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDisciplinesTable extends Migration
+class CreateGroupsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreateDisciplinesTable extends Migration
      */
     public function up()
     {
-        Schema::create('disciplines', function (Blueprint $table) {
+        Schema::create('groups', function (Blueprint $table) {
             $table->id();
-            $table->string('ru_Name')->nullable();
-            $table->string('eng_Name')->nullable();
-            $table->integer('id_Group')->nullable();
-            $table->integer('id_User');
+            $table->string('Name');
+            $table->integer('id_University')->nullable();
+            $table->integer('id_Headman');
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ class CreateDisciplinesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('disciplines');
+        Schema::dropIfExists('groups');
     }
 }
