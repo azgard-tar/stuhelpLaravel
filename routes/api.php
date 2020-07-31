@@ -28,48 +28,54 @@ Route::group([
 Route::group([
     'prefix' => 'user'
 ], function () {
-    Route::put('update', 'UserController@userUpdate');
-    Route::delete('delete', 'UserController@delete');
+    if( auth()->check() ){
+        Route::put('update', 'UserController@userUpdate');
+        Route::delete('delete', 'UserController@delete');
 
-    Route::get('image', 'UserController@userGetImage');
-    Route::post('image', 'UserController@userUploadImage');
-    
-    Route::post('event','EventController@addEvent'); // C
-    Route::get('event/{event}','EventController@getOne'); // R
-    Route::get('event','EventController@getUsersEvents');
-    Route::put('event/{event}','EventController@updateEvent'); // U
-    Route::delete('event/{event}','EventController@deleteEvent'); // D
+        Route::get('image', 'UserController@userGetImage');
+        Route::post('image', 'UserController@userUploadImage');
+        
+        Route::post('event','EventController@addEvent'); // C
+        Route::get('event/{event}','EventController@getOne'); // R
+        Route::get('event','EventController@getUsersEvents');
+        Route::put('event/{event}','EventController@updateEvent'); // U
+        Route::delete('event/{event}','EventController@deleteEvent'); // D
 
-    Route::get('privilege', 'PrivilegeController@getPriv');
+        Route::get('privilege', 'PrivilegeController@getPriv');
 
-    Route::post('discipline','DisciplineController@addDisc'); // C
-    Route::get('discipline','DisciplineController@getUserDisc'); // R
-    Route::put('discipline/{discipline}','DisciplineController@updateDisc'); // U
-    Route::delete('discipline/{discipline}','DisciplineController@deleteDisc'); // D
+        Route::post('discipline','DisciplineController@addDisc'); // C
+        Route::get('discipline','DisciplineController@getUserDisc'); // R
+        Route::put('discipline/{discipline}','DisciplineController@updateDisc'); // U
+        Route::delete('discipline/{discipline}','DisciplineController@deleteDisc'); // D
 
-    Route::post('subject','SubjectController@addSubj'); // C
-    Route::get('subject','SubjectController@getUserSubjects'); // R
-    Route::put('subject/{subject}','SubjectController@updateSubj'); // U
-    Route::delete('subject/{subject}','SubjectController@deleteSubj'); // D
+        Route::post('subject','SubjectController@addSubj'); // C
+        Route::get('subject','SubjectController@getUserSubjects'); // R
+        Route::put('subject/{subject}','SubjectController@updateSubj'); // U
+        Route::delete('subject/{subject}','SubjectController@deleteSubj'); // D
 
-    Route::post('theme','ThemeController@addTheme'); // C
-    Route::get('theme','ThemeController@getUserThemes'); // R
-    Route::put('theme/{theme}','ThemeController@updateTheme'); // U
-    Route::delete('theme/{theme}','ThemeController@deleteTheme'); // D
+        Route::post('theme','ThemeController@addTheme'); // C
+        Route::get('theme','ThemeController@getUserThemes'); // R
+        Route::put('theme/{theme}','ThemeController@updateTheme'); // U
+        Route::delete('theme/{theme}','ThemeController@deleteTheme'); // D
 
-    Route::get('group', 'GroupController@getGroupStudents');
+        Route::get('group', 'GroupController@getGroupStudents');
 
-    Route::post('grouprequests/{group}', 'GroupRequestsController@createRequest');
-    Route::delete('grouprequests', 'GroupRequestsController@deleteRequest');
+        Route::post('grouprequests/{group}', 'GroupRequestsController@createRequest');
+        Route::delete('grouprequests', 'GroupRequestsController@deleteRequest');
 
-    Route::get('university/{university}', 'UniversityController@getOneUni');
-    Route::get('university', 'UniversityController@getAllUni');
+        Route::get('searchgroup','GroupController@searchGroup');
 
-    Route::get('country/{country}', 'CountryController@getOneCountry');
-    Route::get('country', 'CountryController@getAllCountry');
+        Route::get('university/{university}', 'UniversityController@getOneUni');
+        Route::get('university', 'UniversityController@getAllUni');
 
-    Route::get('city/{city}', 'CityController@getOneCity');
-    Route::get('city', 'CityController@getAllCity');
+        Route::get('country/{country}', 'CountryController@getOneCountry');
+        Route::get('country', 'CountryController@getAllCountry');
+
+        Route::get('city/{city}', 'CityController@getOneCity');
+        Route::get('city', 'CityController@getAllCity');
+
+        
+    }
 });
 
 Route::group([

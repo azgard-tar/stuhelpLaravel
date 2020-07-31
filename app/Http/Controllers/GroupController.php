@@ -7,6 +7,27 @@ use App\Groups;
 
 class GroupController extends Controller
 {
+    // search group 
+    public function searchGroup( Request $request ){
+        $request->validate([
+            'id_University' => 'exists:universities,id'
+        ]);
+        if( $request->Name && $request->id_University ){
+            return response()->json(
+                Groups::where( 'id_University', $request->id_University
+                     )->where( 'Name',          $request->Name )->get()      
+                ,200
+            );
+        } else if( $request->Name || $request->id_University ) {
+            return response()->json([
+                Groups::where( 'id_University', $request->id_University
+                     )->orWhere( 'Name',          $request->Name )->get()]     
+                ,200
+            );
+        } else{
+            return response()->json("Нет данных",403);
+        }
+    }
     // get students
     public function getGroupStudents( Request $request, Groups $group = null ){
         if( auth()->user()->id_Group || $group->id )
@@ -20,7 +41,7 @@ class GroupController extends Controller
                         "Info" => Groups::find( $group->id ?? auth()-user()->id_Group )                        
                 ], 200 
             );
-        return response()->json("You don't have a group",403);
+        return response()->json("У вас нет группы",403);
     }
     // get group
     public function getGroups(){
