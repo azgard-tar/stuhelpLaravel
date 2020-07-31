@@ -26,9 +26,6 @@ class CreateUsersTable extends Migration
 
             $table->integer('id_Group')->nullable();
             $table->dateTime('LastLogin',0)->nullable();
-            $table->string('ShopInfo',64)->nullable();
-            $table->integer('Coins')->default(100);
-            $table->integer('id_Interface')->nullable();
             $table->integer('id_City')->nullable();
             $table->integer('id_Country')->nullable();
             $table->integer('Privilege')->default(1);

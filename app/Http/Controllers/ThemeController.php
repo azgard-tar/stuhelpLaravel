@@ -24,7 +24,9 @@ class ThemeController extends Controller
     public function addTheme( Request $request )
     {
         $request->validate([
-            'id_User' => 'exists:users,id'
+            'id_User' => 'exists:users,id',
+            'id_Group' => 'exists:groups,id',
+            'id_Subject' => 'exists:subjects,id'
         ]);
         
         $theme = new Theme;
@@ -42,7 +44,7 @@ class ThemeController extends Controller
     public function updateTheme( Request $request, Theme $theme )
     {
         $request->validate([
-            'id_User' => 'exists:users,id'
+            'id_Subject' => 'exists:subjects,id'
         ]);
 
         if( $theme->id_User === auth()->user()->id  ) {

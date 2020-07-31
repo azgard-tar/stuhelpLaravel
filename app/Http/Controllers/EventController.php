@@ -35,17 +35,14 @@ class EventController extends Controller
     // create 
     public function addEvent( Request $request )
     {
-
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'EvWhen' => 'date|after_or_equal:today',
             'EvWhenEnd' => 'date|after:EvWhen',
             'WhenDoHW' => 'date|after_or_equal:today',
+            'id_Subject' => 'exists:subjects,id',
+            'id_Theme' => 'exists:themes,id'
         ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(),403);
-        }
-
+        
         AboutEvent::create([
             'Name'          => $request->Name,
             'Description'   => $request->Description,
@@ -64,7 +61,7 @@ class EventController extends Controller
             'id_Group'      => ( auth()->user()->Privilege == 1 ? $request->id_Group : null )
         ]);
         return response()->json( 
-            AboutEvent::where('Name',$request->name
+            AboutEvent::where('Name',$request->Name
                 )->where(
                     'id_User', auth()->user()->id
                 )->get()
@@ -73,15 +70,13 @@ class EventController extends Controller
     // update
     public function updateEvent( Request $request, AboutEvent $event )
     {
-        $validator = \Validator::make($request->all(), [
+        $request->validate([
             'EvWhen' => 'date|after_or_equal:today',
             'EvWhenEnd' => 'date|after:EvWhen',
             'WhenDoHW' => 'date|after_or_equal:today',
+            'id_Subject' => 'exists:subjects,id',
+            'id_Theme' => 'exists:themes,id'
         ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(),403);
-        }
 
         if( $event->id_User === auth()->user()->id  ) {
             $event->update( $request->except('id_User','id_Group') );

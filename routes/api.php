@@ -59,6 +59,9 @@ Route::group([
 
     Route::get('group', 'GroupController@getGroupStudents');
 
+    Route::post('grouprequests/{group}', 'GroupRequestsController@createRequest');
+    Route::delete('grouprequests', 'GroupRequestsController@deleteRequest');
+
     Route::get('university/{university}', 'UniversityController@getOneUni');
     Route::get('university', 'UniversityController@getAllUni');
 
@@ -75,6 +78,9 @@ Route::group([
     if( auth()->check() &&   ( 2 <= auth()->user()->Privilege 
     || 4 >= auth()->user()->Privilege ) ){ // headman, moder, admin
         Route::put('group', 'GroupController@updateGroup');
+
+        Route::get('grouprequests', 'GroupRequestsController@getList');
+        Route::get('grouprequests/{user}', 'GroupRequestsController@applyRequest');
     }
 });
 
@@ -88,6 +94,8 @@ Route::group([
         Route::post('group', 'GroupController@createGroup');
         Route::put('group/{group}', 'GroupController@updateGroup');
         Route::delete('group/{group}', 'GroupController@deleteGroup');
+
+        Route::get('grouprequests', 'GroupRequestsController@getAll');
 
         Route::post('university','UniversityController@createUni');
         Route::put('university/{university}','UniversityController@updateUni');

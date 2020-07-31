@@ -30,7 +30,8 @@ class GroupController extends Controller
     // create
     public function createGroup( Request $request ){
         $request->validate([
-            'id_Headman' => 'exists:users,id'
+            'id_Headman' => 'exists:users,id',
+            'id_University' => 'exists:universities,id'
         ]);
 
         $group = new Groups;
@@ -43,7 +44,8 @@ class GroupController extends Controller
     // update
     public function updateGroup( Request $request, Groups $group = null ){
         $request->validate([
-            'id_Headman' => 'exists:users,id'
+            'id_Headman' => 'exists:users,id',
+            'id_University' => 'exists:universities,id'
         ]);
         $currentGroup = Groups::find( $group->id ?? auth()->user()->id_Group );
         $currentGroup->update($request->except('id'));            

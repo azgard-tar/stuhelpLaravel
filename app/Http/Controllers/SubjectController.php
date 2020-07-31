@@ -24,7 +24,9 @@ class SubjectController extends Controller
     public function addSubj( Request $request )
     {
         $request->validate([
-            'id_User' => 'exists:users,id'
+            'id_User' => 'exists:users,id',
+            'id_Group' => 'exists:groups,id',
+            'id_Discipline' => 'exists:disciplines,id'
         ]);
 
         $subject = new Subject;
@@ -42,7 +44,7 @@ class SubjectController extends Controller
     public function updateSubj( Request $request, Subject $subject )
     {
         $request->validate([
-            'id_User' => 'exists:users,id'
+            'id_Discipline' => 'exists:disciplines,id'
         ]);
         
         if( $subject->id_User === auth()->user()->id  ) {

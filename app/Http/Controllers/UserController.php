@@ -25,10 +25,13 @@ class UserController extends Controller
                 'regex:/[A-Z]/',      // must contain at least one uppercase letter
                 'regex:/[0-9]/',      // must contain at least one digit
                 'regex:/[@$!%*#?&]/', // must contain a special character
-            ]
+            ],
+            'id_Group' => 'exists:groups,id',
+            'id_City' => 'exists:cities,id',
+            'id_Country' => 'exists:countries,id'
         ]);
         auth()->user()->update( $request->except(
-            ['Privilege','Login','email_verified_at','created_at','updated_at','id_Group','LastLogin','ShopInfo','Coins','Avatar']) 
+            ['Privilege','Login','email_verified_at','created_at','updated_at','LastLogin','Avatar']) 
         );
         return response()->json( auth()->user(), 200 );
     }

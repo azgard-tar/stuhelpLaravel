@@ -17,6 +17,9 @@ class CityController extends Controller
     }
     // create
     public function createCity( Request $request ){
+        $request->validate([
+            'id_Country' => 'exists:countries,id'
+        ]);
         $city = new City;
         $city->ru_Name = $request->ru_Name;
         $city->eng_Name = $request->eng_Name;
@@ -26,6 +29,9 @@ class CityController extends Controller
     }
     // update
     public function updateCity( Request $request, City $city ){
+        $request->validate([
+            'id_Country' => 'exists:countries,id'
+        ]);
         $city->update( $request->all() );
         return response()->json( $city, 200 );
     }

@@ -17,6 +17,10 @@ class UniversityController extends Controller
     }
     // create ( moder, admin )
     public function createUni( Request $request ){
+        $request->validate([
+            'id_City' => 'exists:cities,id',
+            'id_Country' => 'exists:countries,id'
+        ]);
         $university = new University;
         $university->ru_Name = $request->ru_Name;
         $university->eng_Name = $request->eng_Name;
@@ -27,6 +31,10 @@ class UniversityController extends Controller
     }
     // update ( moder, admin )
     public function updateUni( Request $request, University $university ){
+        $request->validate([
+            'id_City' => 'exists:cities,id',
+            'id_Country' => 'exists:countries,id'
+        ]);
         $university->update( $request->all() );
         return response()->json( $university, 200 );
     }

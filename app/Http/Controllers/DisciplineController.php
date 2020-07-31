@@ -24,7 +24,8 @@ class DisciplineController extends Controller
     public function addDisc( Request $request )
     {
         $request->validate([
-            'id_User' => 'exists:users,id'
+            'id_User' => 'exists:users,id',
+            'id_Group'=> 'exists:groups,id'
         ]);
 
         $discipline = new Discipline;
@@ -39,11 +40,7 @@ class DisciplineController extends Controller
     }
     // update
     public function updateDisc( Request $request, Discipline $discipline )
-    {
-        $request->validate([
-            'id_User' => 'exists:users,id'
-        ]);
-        
+    {        
         if( $discipline->id_User === auth()->user()->id  ) {
             $discipline->update( $request->except('id_User','id_Group') );
             return response()->json( $discipline, 200 );
