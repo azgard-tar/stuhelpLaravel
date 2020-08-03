@@ -4,9 +4,21 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Groups;
-
 class GroupController extends Controller
 {
+    // beautifull response - without id
+    public function beautifulGet( Request $request, Groups $group ){
+        $request->validate([
+            'id_University' => 'exists:universities,id'
+        ]);
+        $bGroup = Groups::find( $group->id );
+        $headm = \App\User::find( $group->id_Headman );
+        $uni = \App\University::find( $group->id_University );
+        $bGroup->university = $uni->Name ?? null;
+        $bGroup->headman = $headm->Login;
+        unset( $bGroup->id_University, $bGroup->id_Headman );
+        return response()->json( $bGroup, 200 );
+    }
     // search group 
     public function searchGroup( Request $request ){
         $request->validate([

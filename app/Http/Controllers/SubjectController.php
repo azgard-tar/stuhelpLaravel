@@ -15,6 +15,8 @@ class SubjectController extends Controller
                 'id_User', ( $user->id ?? auth()->user()->id  ) 
             )->orWhere( 
                 'id_Group', ( $user->id_Group ?? ( auth()->user()->id_Group ?? -1 ) ) 
+            )->orWhere(
+                'global', true
             )->get() 
             ], 
             200 
@@ -26,7 +28,8 @@ class SubjectController extends Controller
         $request->validate([
             'id_User' => 'exists:users,id',
             'id_Group' => 'exists:groups,id',
-            'id_Discipline' => 'exists:disciplines,id'
+            'id_Discipline' => 'exists:disciplines,id',
+            'global' => 'boolean'
         ]);
 
         $subject = new Subject;
@@ -37,6 +40,8 @@ class SubjectController extends Controller
             ? auth()->user()->id_Group : null;
         $subject->id_User = auth()->user()->id;
         $subject->id_Discipline = $request->id_Discipline;
+        if( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 )
+            $subject->global = $request->global;
         $subject->save();
         return response()->json( Subject::find( $subject->id ) , 200 );
     }
@@ -44,11 +49,14 @@ class SubjectController extends Controller
     public function updateSubj( Request $request, Subject $subject )
     {
         $request->validate([
-            'id_Discipline' => 'exists:disciplines,id'
+            'id_Discipline' => 'exists:disciplines,id',
+            'global' => 'boolean'
         ]);
         
         if( $subject->id_User === auth()->user()->id  ) {
-            $subject->update( $request->except('id_User','id_Group') );
+            $subject->update( $request->except('id_User','id_Group','global') );
+            if( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 )
+                $theme->update( $request->except('id_User','id_Group') );
             return response()->json( $subject, 200 );
         }
         else 

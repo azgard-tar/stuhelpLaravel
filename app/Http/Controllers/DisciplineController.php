@@ -15,6 +15,8 @@ class DisciplineController extends Controller
                 'id_User', ( $user->id ?? auth()->user()->id  ) 
             )->orWhere( 
                 'id_Group', ( $user->id_Group ?? ( auth()->user()->id_Group ?? -1 ) ) 
+            )->orWhere(
+                'global', true
             )->get() 
             ], 
             200 
@@ -25,7 +27,8 @@ class DisciplineController extends Controller
     {
         $request->validate([
             'id_User' => 'exists:users,id',
-            'id_Group'=> 'exists:groups,id'
+            'id_Group'=> 'exists:groups,id',
+            'global' => 'boolean'
         ]);
 
         $discipline = new Discipline;
@@ -35,14 +38,21 @@ class DisciplineController extends Controller
             && auth()->user()->id_Group == $request->id_Group) 
             ? auth()->user()->id_Group : null;
         $discipline->id_User = auth()->user()->id;
+        if( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 )
+            $discipline->global = $request->global;
         $discipline->save();
         return response()->json( Discipline::find( $discipline->id ) , 200 );
     }
     // update
     public function updateDisc( Request $request, Discipline $discipline )
     {        
+        $request->validate([
+            'global' => 'boolean'
+        ]);
         if( $discipline->id_User === auth()->user()->id  ) {
-            $discipline->update( $request->except('id_User','id_Group') );
+            $discipline->update( $request->except('id_User','id_Group','global') );
+            if( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 )
+                $discipline->update( $request->except('id_User','id_Group') );
             return response()->json( $discipline, 200 );
         }
         else 

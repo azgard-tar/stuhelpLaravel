@@ -20,6 +20,7 @@ class CreateThemesTable extends Migration
             $table->integer('id_Group')->nullable();
             $table->integer('id_User');
             $table->integer('id_Subject')->nullable();
+            $table->boolean('global')->default('false');
             $table->timestamps();
         });
     }

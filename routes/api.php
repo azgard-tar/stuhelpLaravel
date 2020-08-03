@@ -74,6 +74,7 @@ Route::group([
         Route::get('city/{city}', 'CityController@getOneCity');
         Route::get('city', 'CityController@getAllCity');
 
+        Route::get('group/{group}','GroupController@beautifulGet');
         
     }
 });

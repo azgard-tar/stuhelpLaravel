@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Discipline extends Model
 {
     protected $fillable = [
-        'ru_Name','eng_Name','id_Group','id_User'
+        'ru_Name','eng_Name','id_Group','id_User', 'global'
     ];
 }
