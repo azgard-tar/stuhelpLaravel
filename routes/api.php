@@ -19,10 +19,13 @@ Route::group([
     'prefix' => 'auth'
 ], function () {
     Route::get('login', 'AuthController@login')->name('login');
+    Route::get('login123', 'AuthController@loginTest')->name('login123');
     Route::post('registration', 'AuthController@registration');
-    Route::get('logout', 'AuthController@logout');
-    Route::get('refresh', 'AuthController@refresh');
-    Route::get('me', 'AuthController@me');
+    if( auth()->check() ){
+        Route::get('logout', 'AuthController@logout');
+        Route::get('refresh', 'AuthController@refresh');
+        Route::get('me', 'AuthController@me');
+    }
 });
 
 Route::group([

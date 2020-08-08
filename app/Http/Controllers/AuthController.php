@@ -4,18 +4,10 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    /**
-     * Create a new AuthController instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth:api', ['except' => ['login', 'registration']]);
-    }
 
     /**
      * Get a JWT via given credentials.
@@ -28,6 +20,27 @@ class AuthController extends Controller
 
         if (! $token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        return $this->respondWithToken($token);
+    }
+
+    public function loginTest( Request $request )
+    {
+        //$base64 = explode( ' ', $request->header('Authorization') ); // get base64 string
+        //$credentials = explode( ':', base64_decode( end($base64) ) ); // get email:password
+
+        if ( ! isset($_SERVER['PHP_AUTH_USER']) || 
+             ! $token = auth()->attempt( 
+                 [ 
+                     "email" => $_SERVER['PHP_AUTH_USER'], 
+                     "password" => $_SERVER['PHP_AUTH_PW'] 
+                 ] 
+            ) 
+        ) {
+            header('WWW-Authenticate: Basic realm="My Realm"');
+            header('HTTP/1.0 401 Unauthorized');
+            exit;
         }
 
         return $this->respondWithToken($token);
