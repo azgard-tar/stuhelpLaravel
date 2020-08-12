@@ -15,6 +15,11 @@ use App\User;
 |
 */
 
+Route::get('/index.php', function(){
+    return View('apidoc/index');
+});
+
+
 Route::group([
     'prefix' => 'auth'
 ], function () {
