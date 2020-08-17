@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Groups;
+use App\User;
 class GroupController extends Controller
 {
     // beautifull response - without id
@@ -67,11 +68,20 @@ class GroupController extends Controller
             'id_University' => 'exists:universities,id'
         ]);
 
+        $user = User::find($request->id_Headman);
+        if( $user->id_Group ){
+            return response()->json("Указанный юзер уже состоит в группе",400);
+        }
         $group = new Groups;
         $group->Name = $request->Name;
         $group->id_University = $request->id_University;
         $group->id_Headman = $request->id_Headman;
         $group->save();
+        
+        $user->id_Group = $group->id;
+        $user->Privilege = 2;
+        $user->save();
+
         return response()->json( Groups::find($group->id),200);
     }
     // update

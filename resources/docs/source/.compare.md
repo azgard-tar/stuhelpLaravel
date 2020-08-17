@@ -32,7 +32,7 @@ APIs for managing users
 
 ```bash
 curl -X GET \
-    -G "stuhelp.site/api/auth/login?email=labore&password=quisquam" 
+    -G "stuhelp.site/api/auth/login?email=cumque&password=quis" 
 ```
 
 ```javascript
@@ -41,8 +41,8 @@ const url = new URL(
 );
 
 let params = {
-    "email": "labore",
-    "password": "quisquam",
+    "email": "cumque",
+    "password": "quis",
 };
 Object.keys(params)
     .forEach(key => url.searchParams.append(key, params[key]));
@@ -62,8 +62,8 @@ $response = $client->get(
     'stuhelp.site/api/auth/login',
     [
         'query' => [
-            'email'=> 'labore',
-            'password'=> 'quisquam',
+            'email'=> 'cumque',
+            'password'=> 'quis',
         ],
     ]
 );
@@ -190,7 +190,10 @@ Parameter | Type | Status | Description
 
 ```bash
 curl -X POST \
-    "stuhelp.site/api/auth/registration?login=et&email=enim&password=repellendus" 
+    "stuhelp.site/api/auth/registration" \
+    -H "Content-Type: application/json" \
+    -d '{"login":"aut","email":"omnis","password":"id"}'
+
 ```
 
 ```javascript
@@ -198,17 +201,21 @@ const url = new URL(
     "stuhelp.site/api/auth/registration"
 );
 
-let params = {
-    "login": "et",
-    "email": "enim",
-    "password": "repellendus",
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
 };
-Object.keys(params)
-    .forEach(key => url.searchParams.append(key, params[key]));
 
+let body = {
+    "login": "aut",
+    "email": "omnis",
+    "password": "id"
+}
 
 fetch(url, {
     method: "POST",
+    headers: headers,
+    body: body
 })
     .then(response => response.json())
     .then(json => console.log(json));
@@ -220,10 +227,13 @@ $client = new \GuzzleHttp\Client();
 $response = $client->post(
     'stuhelp.site/api/auth/registration',
     [
-        'query' => [
-            'login'=> 'et',
-            'email'=> 'enim',
-            'password'=> 'repellendus',
+        'headers' => [
+            'Content-Type' => 'application/json',
+        ],
+        'json' => [
+            'login' => 'aut',
+            'email' => 'omnis',
+            'password' => 'id',
         ],
     ]
 );
@@ -250,14 +260,13 @@ print_r(json_decode((string) $body));
 ### HTTP Request
 `POST api/auth/registration`
 
-#### Query Parameters
-
-Parameter | Status | Description
---------- | ------- | ------- | -----------
-    `login` |  required  | The login of the user. Max length: 64, must be unique
-    `email` |  required  | The email of the user
-    `password` |  required  | The password of the user. Rules: min 6 in length, must contain at least one lowercase letter, at least one uppercase letter, at least one digit, a special character
-
+#### Body Parameters
+Parameter | Type | Status | Description
+--------- | ------- | ------- | ------- | -----------
+    `login` | string |  required  | The login of the user. Max length: 64, must be unique
+        `email` | string |  required  | The email of the user
+        `password` | string |  required  | The password of the user. Rules: min 6 in length, must contain at least one lowercase letter, at least one uppercase letter, at least one digit, a special character
+    
 <!-- END_ade88ee476755a9706337cdabd78339b -->
 
 #general

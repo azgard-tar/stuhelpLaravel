@@ -15,14 +15,10 @@ use App\User;
 |
 */
 
-Route::get('/index.php', function(){
-    return View('apidoc/index');
-});
-
-
 Route::group([
     'prefix' => 'auth'
 ], function () {
+    Route::get('/','InfoController@authInfo');
     Route::get('login', 'AuthController@login')->name('login');
     Route::get('login123', 'AuthController@loginTest')->name('login123');
     Route::post('registration', 'AuthController@registration');
@@ -90,7 +86,7 @@ Route::group([
 Route::group([
     'prefix' => 'headman'
 ], function () {
-    if( auth()->check() &&   ( 2 <= auth()->user()->Privilege 
+    if( auth()->check() && ( 2 <= auth()->user()->Privilege 
     || 4 >= auth()->user()->Privilege ) ){ // headman, moder, admin
         Route::put('group', 'GroupController@updateGroup');
 
@@ -111,6 +107,8 @@ Route::group([
         Route::delete('group/{group}', 'GroupController@deleteGroup');
 
         Route::get('grouprequests', 'GroupRequestsController@getAll');
+
+        Route::post('headman/{user}','PrivilegeController@setHeadman');
 
         Route::post('university','UniversityController@createUni');
         Route::put('university/{university}','UniversityController@updateUni');

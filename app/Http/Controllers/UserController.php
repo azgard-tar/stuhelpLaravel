@@ -8,13 +8,13 @@ use App\Http\Controllers\ImageController;
 
 class UserController extends Controller
 {
-    private $errorPerm = "Permission denied";
 
     public function __construct()
     {
         $this->middleware('auth:api');
     }
     
+
     public function userUpdate( Request $request ){
         $request->validate([
             'email'    => 'email|unique:users',
@@ -33,6 +33,7 @@ class UserController extends Controller
         auth()->user()->update( $request->except(
             ['Privilege','Login','email_verified_at','created_at','updated_at','LastLogin','Avatar']) 
         );
+
         return response()->json( auth()->user(), 200 );
     }
     
@@ -45,7 +46,7 @@ class UserController extends Controller
     {
         return ImageController::getImage( $request );
     }
-
+    
     public function userUploadImage( Request $request )
     {
         return ImageController::uploadImage( $request );

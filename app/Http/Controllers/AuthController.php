@@ -81,9 +81,9 @@ class AuthController extends Controller
     /**
      * Registration user
      *
-     * @queryParam login required The login of the user. Max length: 64, must be unique
-     * @queryParam email required The email of the user
-     * @queryParam password required The password of the user. Rules: min 6 in length, must contain at least one lowercase letter, at least one uppercase letter, at least one digit, a special character
+     * @bodyParam login string required The login of the user. Max length: 64, must be unique
+     * @bodyParam email string required The email of the user
+     * @bodyParam password string required The password of the user. Rules: min 6 in length, must contain at least one lowercase letter, at least one uppercase letter, at least one digit, a special character
      * @response {
      *   "message":"Successfully registration!"
      * }
