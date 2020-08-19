@@ -48,13 +48,11 @@ class GroupRequestsController extends Controller
         return response()->json('Запросов от этого пользователя нет', 403);
     }
     // delete ( owner, m, a )
-    public function deleteRequest( Request $request, GroupRequests $grouprequest ){
-        if( $request->user()->id == $grouprequest->id_User 
-        || $request->user()->Privilege == 3 
-        || $request->user()->Privilege == 4 ){
-            $grouprequest->delete();
-            return response()->json(null, 203);
-        }
-        return response()->json('Это не ваш запрос', 203);
+    public function deleteRequest( Request $request, GroupRequests $grouprequest = null ){
+        $req = GroupRequests::where("id_User",auth()->user()->id)->orWhere("id",$grouprequest->id)->first();
+        if( $req )
+            return response()->json('У вас нет запроса', 404);
+        $grouprequest->delete();
+        return response()->json(null, 203);
     }
 }

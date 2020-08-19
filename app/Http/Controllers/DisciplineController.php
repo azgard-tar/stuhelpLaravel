@@ -28,18 +28,16 @@ class DisciplineController extends Controller
         $request->validate([
             'id_User' => 'exists:users,id',
             'id_Group'=> 'exists:groups,id',
-            'global' => 'boolean'
+            'global' => 'boolean',
+            'withGroup' => 'boolean'
         ]);
 
         $discipline = new Discipline;
         $discipline->ru_Name = $request->ru_Name;
         $discipline->eng_Name = $request->eng_Name;
-        $discipline->id_Group = (auth()->user()->Privilege == 2 
-            && auth()->user()->id_Group == $request->id_Group) 
-            ? auth()->user()->id_Group : null;
+        $discipline->id_Group = $request->withGroup ? ( auth()->user()->Privilege == 2 ? auth()->user()->id_Group : null ) : null;
         $discipline->id_User = auth()->user()->id;
-        if( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 )
-            $discipline->global = $request->global;
+        $discipline->global = ( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 ) ? $request->global : false;
         $discipline->save();
         return response()->json( Discipline::find( $discipline->id ) , 200 );
     }
@@ -50,13 +48,14 @@ class DisciplineController extends Controller
             'global' => 'boolean'
         ]);
         if( $discipline->id_User === auth()->user()->id  ) {
-            $discipline->update( $request->except('id_User','id_Group','global') );
-            if( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 )
-                $discipline->update( $request->except('id_User','id_Group') );
+            if( auth()->user()->Privilege < 3 )
+                $discipline->update( $request->except(['id_User','id_Group','global','id']) );
+            elseif( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 )
+                $discipline->update( $request->except(['id_User','id_Group','id']) );
             return response()->json( $discipline, 200 );
         }
         else 
-            return response()->json( "You are not owner of it", 403 );   
+            return response()->json( "Вы не владелец", 403 );   
     }
     // delete
 
@@ -67,6 +66,6 @@ class DisciplineController extends Controller
             return response()->json( null, 203 );
         }
         else 
-            return response()->json( "You are not owner of it", 403 );   
+            return response()->json( "Вы не владелец", 403 );   
     }
 }

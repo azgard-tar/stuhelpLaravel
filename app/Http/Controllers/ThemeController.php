@@ -29,15 +29,14 @@ class ThemeController extends Controller
             'id_User' => 'exists:users,id',
             'id_Group' => 'exists:groups,id',
             'id_Subject' => 'exists:subjects,id',
-            'global' => 'boolean'
+            'global' => 'boolean',
+            'withGroup' => 'boolean'
         ]);
         
         $theme = new Theme;
         $theme->ru_Name = $request->ru_Name;
         $theme->eng_Name = $request->eng_Name;
-        $theme->id_Group = (auth()->user()->Privilege == 2 
-            && auth()->user()->id_Group == $request->id_Group) 
-            ? auth()->user()->id_Group : null;
+        $theme->id_Group = $request->withGroup ? ( auth()->user()->Privilege == 2 ? auth()->user()->id_Group : null ) : null;
         $theme->id_User = auth()->user()->id;
         $theme->id_Subject = $request->id_Subject;
         if( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 )
@@ -54,9 +53,9 @@ class ThemeController extends Controller
         ]);
 
         if( $theme->id_User === auth()->user()->id  ) {
-            $theme->update( $request->except('id_User','id_Group','global') );
+            $theme->update( $request->except(['id_User','id_Group','global','id']) );
             if( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 )
-                $theme->update( $request->except('id_User','id_Group') );
+                $theme->update( $request->except(['id_User','id_Group','id']) );
             return response()->json( $theme, 200 );
         }
         else 

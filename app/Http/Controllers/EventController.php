@@ -40,7 +40,8 @@ class EventController extends Controller
             'EvWhenEnd' => 'date|after:EvWhen',
             'WhenDoHW' => 'date|after_or_equal:today',
             'id_Subject' => 'exists:subjects,id',
-            'id_Theme' => 'exists:themes,id'
+            'id_Theme' => 'exists:themes,id',
+            'withGroup' => 'boolean'
         ]);
         
         AboutEvent::create([
@@ -58,7 +59,7 @@ class EventController extends Controller
             'Homework'      => $request->Homework,
             'WhenDoHW'      => $request->WhenDoHW,
             'Color'         => $request->Color, 
-            'id_Group'      => ( auth()->user()->Privilege == 1 ? $request->id_Group : null )
+            'id_Group'      => $request->withGroup ? ( auth()->user()->Privilege == 2 ? auth()->user()->id_Group : null ) : null
         ]);
         return response()->json( 
             AboutEvent::where('Name',$request->Name
@@ -79,7 +80,7 @@ class EventController extends Controller
         ]);
 
         if( $event->id_User === auth()->user()->id  ) {
-            $event->update( $request->except('id_User','id_Group') );
+            $event->update( $request->except('id_User','id_Group','id') );
             return response()->json( $event, 200 );
         }
         else 

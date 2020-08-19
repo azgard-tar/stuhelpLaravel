@@ -35,7 +35,7 @@ class UniversityController extends Controller
             'id_City' => 'exists:cities,id',
             'id_Country' => 'exists:countries,id'
         ]);
-        $university->update( $request->all() );
+        $university->update( $request->except('id') );
         return response()->json( $university, 200 );
     }
     // delete ( moder, admin )

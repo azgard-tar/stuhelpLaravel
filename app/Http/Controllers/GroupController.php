@@ -8,17 +8,17 @@ use App\User;
 class GroupController extends Controller
 {
     // beautifull response - without id
-    public function beautifulGet( Request $request, Groups $group ){
+    public function beautifulGet( Request $request, Groups $Rgroup = null ){
         $request->validate([
             'id_University' => 'exists:universities,id'
         ]);
-        $bGroup = Groups::find( $group->id );
+        $group = Groups::find( $Rgroup ?? auth()->user()->id_Group );
         $headm = \App\User::find( $group->id_Headman );
         $uni = \App\University::find( $group->id_University );
-        $bGroup->university = $uni->Name ?? null;
-        $bGroup->headman = $headm->Login;
-        unset( $bGroup->id_University, $bGroup->id_Headman );
-        return response()->json( $bGroup, 200 );
+        $group->university = $uni->Name ?? null;
+        $group->headman = $headm->Login;
+        unset( $group->id_University, $group->id_Headman );
+        return response()->json( $group, 200 );
     }
     // search group 
     public function searchGroup( Request $request ){

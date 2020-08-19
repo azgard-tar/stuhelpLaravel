@@ -25,7 +25,7 @@ class CountryController extends Controller
     }
     // update
     public function updateCountry( Request $request, Country $country ){
-        $country->update( $request->all() );
+        $country->update( $request->except('id') );
         return response()->json( $country, 200 );
     }
     // delete

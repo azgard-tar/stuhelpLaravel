@@ -62,7 +62,7 @@ Route::group([
         Route::put('theme/{theme}','ThemeController@updateTheme'); // U
         Route::delete('theme/{theme}','ThemeController@deleteTheme'); // D
 
-        Route::get('group', 'GroupController@getGroupStudents');
+        Route::get('group/students', 'GroupController@getGroupStudents');
 
         Route::post('grouprequests/{group}', 'GroupRequestsController@createRequest');
         Route::delete('grouprequests', 'GroupRequestsController@deleteRequest');
@@ -78,7 +78,7 @@ Route::group([
         Route::get('city/{city}', 'CityController@getOneCity');
         Route::get('city', 'CityController@getAllCity');
 
-        Route::get('group/{group}','GroupController@beautifulGet'); // get info without id_Uni...
+        Route::get('group','GroupController@beautifulGet'); // get info without id_Uni...
         
     }
 });
@@ -100,13 +100,16 @@ Route::group([
 ], function () {
     if( auth()->check() && ( 3 == auth()->user()->Privilege
     || 4 == auth()->user()->Privilege ) ){ // moder, admin
-        Route::get('group/{group}', 'GroupController@getGroupStudents');
+        Route::get('group/students/{group}', 'GroupController@getGroupStudents');
         Route::get('group', 'GroupController@getGroups');
         Route::post('group', 'GroupController@createGroup');
         Route::put('group/{group}', 'GroupController@updateGroup');
         Route::delete('group/{group}', 'GroupController@deleteGroup');
 
+        Route::get('group/{group}','GroupController@beautifulGet');
+
         Route::get('grouprequests', 'GroupRequestsController@getAll');
+        Route::delete('grouprequests/{grouprequests}', 'GroupRequestsController@deleteRequest');
 
         Route::post('headman/{user}','PrivilegeController@setHeadman');
 
@@ -121,6 +124,13 @@ Route::group([
         Route::post('city','CityController@createCity');
         Route::put('city/{city}','CityController@updateCity');
         Route::delete('city/{city}','CityController@deleteCity');
+
+        //Route::get('discipline/{user}','DisciplineController@getUserDisc'); 
+        //Route::get('subject/{user}','SubjectController@getUserSubjects'); 
+        //Route::get('theme/{user}','ThemeController@getUserThemes'); 
+
+        //Route::get('image/{user}', 'AdminController@adminGetImage');
+        //Route::post('image/{user}', 'AdminController@adminUploadImage');
     }
 });
 
@@ -130,20 +140,13 @@ Route::group([
     if( auth()->check() && 4 == auth()->user()->Privilege ){ // for admins
         Route::get('user/{user}', 'AdminController@getOne');
         Route::get('user', 'AdminController@getAll');
-        Route::put('update/{user}', 'AdminController@update');
+        //Route::put('update/{user}', 'AdminController@update');
         Route::delete('delete/{user}', 'AdminController@delete');
 
-        Route::get('image/{user}', 'AdminController@adminGetImage');
-        Route::post('image/{user}', 'AdminController@adminUploadImage');
+        //Route::get('event/{user}','EventController@getUsersEvents');
 
-        Route::get('event/{user}','EventController@getUsersEvents');
-
-        Route::get('privilege', 'PrivilegeController@getAllPriv');
-        Route::get('privilege/{privilege}', 'PrivilegeController@getPriv');
-
-        Route::get('discipline/{user}','DisciplineController@getUserDisc'); // R
-        Route::get('subject/{user}','SubjectController@getUserSubjects'); // R
-        Route::get('theme/{user}','ThemeController@getUserThemes'); // R
+        //Route::get('privilege', 'PrivilegeController@getAllPriv');
+        //Route::get('privilege/{privilege}', 'PrivilegeController@getPriv');
     }
 });
 

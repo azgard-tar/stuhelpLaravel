@@ -32,7 +32,7 @@ class CityController extends Controller
         $request->validate([
             'id_Country' => 'exists:countries,id'
         ]);
-        $city->update( $request->all() );
+        $city->update( $request->except('id') );
         return response()->json( $city, 200 );
     }
     // delete

@@ -29,15 +29,14 @@ class SubjectController extends Controller
             'id_User' => 'exists:users,id',
             'id_Group' => 'exists:groups,id',
             'id_Discipline' => 'exists:disciplines,id',
-            'global' => 'boolean'
+            'global' => 'boolean',
+            'withGroup' => 'boolean'
         ]);
 
         $subject = new Subject;
         $subject->ru_Name = $request->ru_Name;
         $subject->eng_Name = $request->eng_Name;
-        $subject->id_Group = (auth()->user()->Privilege == 2 
-            && auth()->user()->id_Group == $request->id_Group) 
-            ? auth()->user()->id_Group : null;
+        $subject->id_Group = $request->withGroup ? ( auth()->user()->Privilege == 2 ? auth()->user()->id_Group : null ) : null;
         $subject->id_User = auth()->user()->id;
         $subject->id_Discipline = $request->id_Discipline;
         if( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 )
@@ -54,9 +53,9 @@ class SubjectController extends Controller
         ]);
         
         if( $subject->id_User === auth()->user()->id  ) {
-            $subject->update( $request->except('id_User','id_Group','global') );
+            $subject->update( $request->except(['id_User','id_Group','global','id']) );
             if( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 )
-                $theme->update( $request->except('id_User','id_Group') );
+                $theme->update( $request->except(['id_User','id_Group','id']) );
             return response()->json( $subject, 200 );
         }
         else 
