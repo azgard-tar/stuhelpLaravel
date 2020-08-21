@@ -35,6 +35,7 @@ class EventController extends Controller
     // create 
     public function addEvent( Request $request )
     {
+
         $request->validate([
             'EvWhen' => 'date|after_or_equal:today',
             'EvWhenEnd' => 'date|after:EvWhen',
@@ -43,7 +44,7 @@ class EventController extends Controller
             'id_Theme' => 'exists:themes,id',
             'withGroup' => 'boolean'
         ]);
-        
+
         AboutEvent::create([
             'Name'          => $request->Name,
             'Description'   => $request->Description,
@@ -52,12 +53,12 @@ class EventController extends Controller
             'id_User'       => auth()->user()->id ,
             'EvType'        => $request->EvType ?? 0,
             'EvWhere'       => $request->EvWhere,
-            'id_Subject'    => $request->id_Subject,
-            'id_Theme'      => $request->id_Theme,
-            'Keywords'      => $request->Keywords,
-            'Questions'     => $request->Questions,
-            'Homework'      => $request->Homework,
-            'WhenDoHW'      => $request->WhenDoHW,
+            'id_Subject'    => $request->EvType == 1 ? $request->id_Subject : null,
+            'id_Theme'      => $request->EvType == 1 ? $request->id_Theme   : null,
+            'Keywords'      => $request->EvType == 1 ? $request->Keywords   : null,
+            'Questions'     => $request->EvType == 1 ? $request->Questions  : null,
+            'Homework'      => $request->EvType == 1 ? $request->Homework   : null,
+            'WhenDoHW'      => $request->EvType == 1 ? $request->WhenDoHW   : null,
             'Color'         => $request->Color, 
             'id_Group'      => $request->withGroup ? ( auth()->user()->Privilege == 2 ? auth()->user()->id_Group : null ) : null
         ]);
@@ -84,7 +85,7 @@ class EventController extends Controller
             return response()->json( $event, 200 );
         }
         else 
-            return response()->json( "You are not owner of this event", 403 );   
+            return response()->json( ["error" => "Это не ваше событие"], 403 );   
     }
     // delete
     public function deleteEvent( Request $request, AboutEvent $event )
@@ -94,6 +95,6 @@ class EventController extends Controller
             return response()->json( null, 203 );
         }
         else 
-            return response()->json( "You are not owner of this event", 403 );   
+            return response()->json( ["error" => "Это не ваше событие"], 403 );   
     }
 }

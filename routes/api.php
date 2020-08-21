@@ -15,6 +15,10 @@ use App\User;
 |
 */
 
+Route::fallback(function(){
+    return response()->json(['message' => 'Page Not Found'], 404);
+});
+
 Route::group([
     'prefix' => 'auth'
 ], function () {
@@ -33,19 +37,20 @@ Route::group([
     'prefix' => 'user'
 ], function () {
     if( auth()->check() ){
+        Route::get('/','InfoController@userInfo');
         Route::put('update', 'UserController@userUpdate');
         Route::delete('delete', 'UserController@delete');
 
         Route::get('image', 'UserController@userGetImage');
         Route::post('image', 'UserController@userUploadImage');
+
+        Route::get('privilege', 'PrivilegeController@getPriv');
         
         Route::post('event','EventController@addEvent'); // C
         Route::get('event/{event}','EventController@getOne'); // R
         Route::get('event','EventController@getUsersEvents');
         Route::put('event/{event}','EventController@updateEvent'); // U
         Route::delete('event/{event}','EventController@deleteEvent'); // D
-
-        Route::get('privilege', 'PrivilegeController@getPriv');
 
         Route::post('discipline','DisciplineController@addDisc'); // C
         Route::get('discipline','DisciplineController@getUserDisc'); // R
@@ -63,11 +68,10 @@ Route::group([
         Route::delete('theme/{theme}','ThemeController@deleteTheme'); // D
 
         Route::get('group/students', 'GroupController@getGroupStudents');
-
         Route::post('grouprequests/{group}', 'GroupRequestsController@createRequest');
         Route::delete('grouprequests', 'GroupRequestsController@deleteRequest');
-
         Route::get('searchgroup','GroupController@searchGroup');
+        Route::get('group','GroupController@beautifulGet'); // get info without id_Uni...
 
         Route::get('university/{university}', 'UniversityController@getOneUni');
         Route::get('university', 'UniversityController@getAllUni');
@@ -77,8 +81,6 @@ Route::group([
 
         Route::get('city/{city}', 'CityController@getOneCity');
         Route::get('city', 'CityController@getAllCity');
-
-        Route::get('group','GroupController@beautifulGet'); // get info without id_Uni...
         
     }
 });
@@ -87,7 +89,8 @@ Route::group([
     'prefix' => 'headman'
 ], function () {
     if( auth()->check() && ( 2 <= auth()->user()->Privilege 
-    || 4 >= auth()->user()->Privilege ) ){ // headman, moder, admin
+    && 4 >= auth()->user()->Privilege ) ){ // headman, moder, admin
+        Route::get('/','InfoController@headmanInfo');
         Route::put('group', 'GroupController@updateGroup');
 
         Route::get('grouprequests', 'GroupRequestsController@getList');
@@ -100,6 +103,7 @@ Route::group([
 ], function () {
     if( auth()->check() && ( 3 == auth()->user()->Privilege
     || 4 == auth()->user()->Privilege ) ){ // moder, admin
+        Route::get('/','InfoController@moderInfo');
         Route::get('group/students/{group}', 'GroupController@getGroupStudents');
         Route::get('group', 'GroupController@getGroups');
         Route::post('group', 'GroupController@createGroup');
@@ -138,6 +142,7 @@ Route::group([
     'prefix' => 'admin'
 ], function () {
     if( auth()->check() && 4 == auth()->user()->Privilege ){ // for admins
+        Route::get('/','InfoController@adminInfo');
         Route::get('user/{user}', 'AdminController@getOne');
         Route::get('user', 'AdminController@getAll');
         //Route::put('update/{user}', 'AdminController@update');

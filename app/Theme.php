@@ -9,4 +9,8 @@ class Theme extends Model
     protected $fillable = [
         'ru_Name','eng_Name','id_Group','id_User','id_Subject', 'global'
     ];
+
+    protected $hidden = [
+        'created_at','updated_at'
+    ];
 }

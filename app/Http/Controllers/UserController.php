@@ -20,11 +20,11 @@ class UserController extends Controller
             'email'    => 'email|unique:users',
             'password' => [
                 'string',
-                'min:6',             // must be at least 10 characters in length
-                'regex:/[a-z]/',      // must contain at least one lowercase letter
-                'regex:/[A-Z]/',      // must contain at least one uppercase letter
-                'regex:/[0-9]/',      // must contain at least one digit
-                'regex:/[@$!%*#?&]/', // must contain a special character
+                'min:6',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&]/',
             ],
             'id_City' => 'exists:cities,id',
             'id_Country' => 'exists:countries,id'

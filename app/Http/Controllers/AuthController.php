@@ -6,32 +6,9 @@ use App\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 
-/**
- * @group User management
- *
- * APIs for managing users
- */
-
 class AuthController extends Controller
 {
-    // urlParam, queryParam, bodyParam, response, required
 
-    /**
-     * Login with email and password
-     *
-     * @queryParam email required The email of the user
-     * @queryParam password required The password of the user
-     * 
-     * @response 401 {
-     *  "error":"Unauthorized"
-     * }
-     * 
-     * @response {
-     *   "access_token": "token",
-     *   "token_type": "bearer",
-     *   "expires_in": 3600
-     * }
-     */
     public function login()
     {
         $credentials = request(['email', 'password']);
@@ -39,23 +16,10 @@ class AuthController extends Controller
         if (! $token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-
+        date_default_timezone_set("Europe/Kiev");
+        auth()->user()->update([ "LastLogin" => date("Y-m-d H:i:s") ]);
         return $this->respondWithToken($token);
     }
-
-    /**
-     * Login with authorization header
-     *
-     * @bodyParam Authorization required Basic base64_encode.Example: Bearer asdasd
-     * @response 401 {
-     *  "error":"Unauthorized"
-     * }
-     * @response {
-     *   "access_token": "token",
-     *   "token_type": "bearer",
-     *   "expires_in": 3600
-     * }
-     */
 
     public function loginTest( Request $request )
     {
@@ -74,23 +38,11 @@ class AuthController extends Controller
             header('HTTP/1.0 401 Unauthorized');
             exit;
         }
-
+        date_default_timezone_set("Europe/Kiev");
+        auth()->user()->update([ "LastLogin" => date("Y-m-d H:i:s") ]);
         return $this->respondWithToken($token);
     }
 
-    /**
-     * Registration user
-     *
-     * @bodyParam login string required The login of the user. Max length: 64, must be unique
-     * @bodyParam email string required The email of the user
-     * @bodyParam password string required The password of the user. Rules: min 6 in length, must contain at least one lowercase letter, at least one uppercase letter, at least one digit, a special character
-     * @response {
-     *   "message":"Successfully registration!"
-     * }
-     * @response 401{
-     *   "error":"Text of the error"
-     * }
-     */
     public function registration()
     {
         //$login = request('login');
@@ -109,11 +61,11 @@ class AuthController extends Controller
             'password' => [
                 'required',
                 'string',
-                'min:6',             // must be at least 6 characters in length
-                'regex:/[a-z]/',      // must contain at least one lowercase letter
-                'regex:/[A-Z]/',      // must contain at least one uppercase letter
-                'regex:/[0-9]/',      // must contain at least one digit
-                'regex:/[@$!%*#?&]/', // must contain a special character
+                'min:6',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&]/', 
             ],
         ];
     
@@ -133,46 +85,11 @@ class AuthController extends Controller
         return response()->json(['message' => 'Successfully registration!'],200);
     }
 
-    /**
-     * Get info about authorizated user
-     *
-     * @authenticated
-     * @response {
-     *   "id": 1,
-     *   "Surname": null,
-     *   "Login": "admin",
-     *   "name": "Vasya",
-     *   "email": "admin@google.com",
-     *   "email_verified_at": null,
-     *   "created_at": "2020-07-31T10:51:52.000000Z",
-     *   "updated_at": "2020-07-31T10:51:52.000000Z",
-     *   "id_Group": null,
-     *   "LastLogin": null,
-     *   "id_City": null,
-     *   "id_Country": null,
-     *   "Privilege": 4,
-     *   "Avatar": "images/none.jpg"
-     * }
-     * @response 401{
-     *  "error":"Unauthorized"
-     * }
-     */
     public function me()
     {
         return response()->json(auth()->user());
     }
 
-    /**
-     * Leave account
-     *
-     * @authenticated
-     * @response {
-     *  "message":"Successfully logged out"
-     * }
-     * @response 401{
-     *  "error":"Unauthorized"
-     * }
-     */
     public function logout()
     {
         auth()->logout();
@@ -180,19 +97,6 @@ class AuthController extends Controller
         return response()->json(['message' => 'Successfully logged out'],200);
     }
 
-    /**
-     * Refresh a token.
-     *
-     * @authenticated
-     * @response {
-     *   "access_token": "token",
-     *   "token_type": "bearer",
-     *   "expires_in": 3600
-     * }
-     * @response 401{
-     *  "error":"Unauthorized"
-     * }
-     */
     public function refresh()
     {
         return $this->respondWithToken(auth()->refresh());

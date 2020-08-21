@@ -13,4 +13,8 @@ class AboutEvent extends Model
         'Keywords','Questions','Homework',
         'WhenDoHW','Color', 'id_Group'       
     ];
+
+    protected $hidden = [
+        'created_at','updated_at'
+    ];
 }

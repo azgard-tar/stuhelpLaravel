@@ -19,7 +19,7 @@ class CreateDisciplinesTable extends Migration
             $table->string('eng_Name')->nullable();
             $table->integer('id_Group')->nullable();
             $table->integer('id_User');
-            $table->boolean('global')->default('false');
+            $table->boolean('global')->default('0');
             $table->timestamps();
         });
     }
