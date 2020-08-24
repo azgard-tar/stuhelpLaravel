@@ -20,6 +20,7 @@ class InfoController extends Controller
             [
                 "url"        => ("/api/auth/login"),
                 "description"=> "Обычная авторизация через ?key=value",
+                "group"      => "user",
                 "method"     => "GET",
                 "urlParam"   => null,
                 "queryParam" => [
@@ -47,6 +48,7 @@ class InfoController extends Controller
             [
                 "url"        => ("/api/auth/login123"),
                 "description"=> "Защищенная авторизация через параметр тела запроса Authorization",
+                "group"      => "user",
                 "method"     => "GET",
                 "urlParam"   => null,
                 "queryParam" => null,
@@ -71,6 +73,7 @@ class InfoController extends Controller
             [
                 "url"        => ("/api/auth/registration"),
                 "description"=> "Регистрация нового пользователя",
+                "group"      => "user",
                 "method"     => "POST",
                 "urlParam"   => null,
                 "queryParam" => null,
@@ -104,6 +107,7 @@ class InfoController extends Controller
                 [
                     "url"        => ("/api/auth/me"),
                     "description"=> "Посмотреть инфу про себя",
+                    "group"      => "user",
                     "method"     => "GET",
                     "authReq"    => true,
                     "urlParam"   => null,
@@ -134,6 +138,7 @@ class InfoController extends Controller
                 [
                     "url"        => ("/api/auth/logout"),
                     "description"=> "Выйти из системы",
+                    "group"      => "user",
                     "method"     => "GET",
                     "authReq"    => true,
                     "urlParam"   => null,
@@ -151,6 +156,7 @@ class InfoController extends Controller
                 [
                     "url"        => ("/api/auth/refresh"),
                     "description"=> "Возобновить токен авторизации( +1 час )",
+                    "group"      => "user",
                     "method"     => "GET",
                     "authReq"    => true,
                     "urlParam"   => null,
@@ -174,6 +180,7 @@ class InfoController extends Controller
             [
                 "url"        => ("/api/user/update"),
                 "description"=> "Обновить инфу о себе",
+                "group"      => "user",
                 "method"     => "PUT",
                 "authReq"    => true,
                 "urlParam"   => null,
@@ -234,6 +241,7 @@ class InfoController extends Controller
             [
                 "url"        => ("/api/user/delete"),
                 "description"=> "Удалить себя",
+                "group"      => "user",
                 "method"     => "DELETE",
                 "authReq"    => true,
                 "urlParam"   => null,
@@ -249,6 +257,7 @@ class InfoController extends Controller
             [
                 "url"        => ("/api/user/image"),
                 "description"=> "Получить аватарку",
+                "group"      => "user",
                 "method"     => "GET",
                 "authReq"    => true,
                 "urlParam"   => null,
@@ -259,6 +268,7 @@ class InfoController extends Controller
             [
                 "url"        => ("/api/user/image"),
                 "description"=> "Загрузить аватарку",
+                "group"      => "user",
                 "method"     => "POST",
                 "authReq"    => true,
                 "urlParam"   => null,
@@ -286,6 +296,7 @@ class InfoController extends Controller
             [
                 "url"        => ("/api/user/privilege"),
                 "description"=> "Получить информацию про свой статус аккаунта",
+                "group"      => "user",
                 "method"     => "DELETE",
                 "authReq"    => true,
                 "urlParam"   => null,
@@ -305,6 +316,7 @@ class InfoController extends Controller
             [
                 "url"        => ("/api/user/event"),
                 "description"=> "Создать событие",
+                "group"      => "event",
                 "method"     => "POST",
                 "authReq"    => true,
                 "urlParam"   => null,
@@ -422,6 +434,7 @@ class InfoController extends Controller
             [
                 "url"        => ("/api/user/event"),
                 "description"=> "Посмотреть все события",
+                "group"      => "event",
                 "method"     => "GET",
                 "authReq"    => true,
                 "urlParam"   => null,
@@ -431,6 +444,7 @@ class InfoController extends Controller
             [
                 "url"        => ("/api/user/event/{id}"),
                 "description"=> "Посмотреть одно событие",
+                "group"      => "event",
                 "method"     => "GET",
                 "authReq"    => true,
                 "urlParam"   => [
@@ -470,6 +484,7 @@ class InfoController extends Controller
             [
                 "url"        => ("/api/user/event/{id}"),
                 "description"=> "Обновить информацию о событии. Смотрите параметры в описании создания события",
+                "group"      => "event",
                 "method"     => "PUT",
                 "authReq"    => true,
                 "urlParam"   => [
@@ -509,6 +524,7 @@ class InfoController extends Controller
             [
                 "url"        => ("/api/user/event/{id}"),
                 "description"=> "Удалить событие",
+                "group"      => "event",
                 "method"     => "DELETE",
                 "authReq"    => true,
                 "urlParam"   => [
@@ -531,7 +547,819 @@ class InfoController extends Controller
                     ]
                 ]
             ], // /api/user/event - DELETE
+            [
+                "url"        => ("/api/user/discipline"),
+                "description"=> "Посмотреть все доступные дисциплина(глобальные, групповые, личные)",
+                "group"      => "discipline",
+                "method"     => "GET",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+            ], // /api/user/discipline - GET
+            [
+                "url"        => ("/api/user/discipline/{id}"),
+                "description"=> "Обновить информацию о дисциплине. Смотрите параметры в описании создания дисциплины.",
+                "group"      => "discipline",
+                "method"     => "PUT",
+                "authReq"    => true,
+                "urlParam"   => [
+                    "id"        => [
+                        "required"   => true,
+                        "type"       => "int",
+                        "description"=> "id дисциплины из базы данных",
+                        "example"    => "/api/user/discipline/1"
+                    ]
+                ],
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "200"      => [
+                        "id"        => 1,
+                        "ru_Name"   => "Инженерия программного обеспечения",
+                        "eng_Name"  => "Software engineering",
+                        "id_Group"  => null,
+                        "global"    => 0
+                    ],
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ]
+                ]
+            ], // /api/user/discipline - PUT
+            [
+                "url"        => ("/api/user/discipline/{id}"),
+                "description"=> "Удалить дисциплину( если вы владелец )",
+                "group"      => "discipline",
+                "method"     => "DELETE",
+                "authReq"    => true,
+                "urlParam"   => [
+                    "id"        => [
+                        "required"   => true,
+                        "type"       => "int",
+                        "description"=> "id дисциплины из базы данных",
+                        "example"    => "/api/user/discipline/1"
+                    ]
+                ],
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "203"      => null,
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ],
+                    "403"      => [
+                        "error" =>  "Это не ваша дисциплина"
+                    ]
+                ]
+            ], // /api/user/discipline - DELETE
+            [
+                "url"        => ("/api/user/subject"),
+                "description"=> "Посмотреть все доступные предметы(глобальные, групповые, личные)",
+                "group"      => "subject",
+                "method"     => "GET",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+            ], // /api/user/subject - GET
+            [
+                "url"        => ("/api/user/subject/{id}"),
+                "description"=> "Обновить информацию о предмете. Смотрите параметры в описании создания предмета.",
+                "group"      => "subject",
+                "method"     => "PUT",
+                "authReq"    => true,
+                "urlParam"   => [
+                    "id"        => [
+                        "required"   => true,
+                        "type"       => "int",
+                        "description"=> "id предмета из базы данных",
+                        "example"    => "/api/user/subject/1"
+                    ]
+                ],
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "200"      => [
+                        "id"        => 1,
+                        "ru_Name"   => "Дискретная математика",
+                        "eng_Name"  => "Discrete Math",
+                        "id_Group"  => null,
+                        "id_Discipline" => 2,
+                        "global"    => 0
+                    ],
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ]
+                ]
+            ], // /api/user/subject - PUT
+            [
+                "url"        => ("/api/user/subject/{id}"),
+                "description"=> "Удалить предмет( если вы владелец )",
+                "group"      => "subject",
+                "method"     => "DELETE",
+                "authReq"    => true,
+                "urlParam"   => [
+                    "id"        => [
+                        "required"   => true,
+                        "type"       => "int",
+                        "description"=> "id предмета из базы данных",
+                        "example"    => "/api/user/subject/1"
+                    ]
+                ],
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "203"      => null,
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ],
+                    "403"      => [
+                        "error" =>  "Это не ваш предмет"
+                    ]
+                ]
+            ], // /api/user/subject - DELETE
+            [
+                "url"        => ("/api/user/theme"),
+                "description"=> "Посмотреть все доступные темы(глобальные, групповые, личные)",
+                "group"      => "theme",
+                "method"     => "GET",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+            ], // /api/user/theme - GET
+            [
+                "url"        => ("/api/user/theme/{id}"),
+                "description"=> "Обновить информацию о теме. Смотрите параметры в описании создания темы.",
+                "group"      => "theme",
+                "method"     => "PUT",
+                "authReq"    => true,
+                "urlParam"   => [
+                    "id"        => [
+                        "required"   => true,
+                        "type"       => "int",
+                        "description"=> "id темы из базы данных",
+                        "example"    => "/api/user/theme/1"
+                    ]
+                ],
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "200"      => [
+                        "id"        => 1,
+                        "ru_Name"   => "Бинарный код",
+                        "eng_Name"  => "Binary code",
+                        "id_Group"  => null,
+                        "id_Subject"=> 2,
+                        "global"    => 0
+                    ],
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ]
+                ]
+            ], // /api/user/theme - PUT
+            [
+                "url"        => ("/api/user/theme/{id}"),
+                "description"=> "Удалить тему( если вы владелец )",
+                "group"      => "theme",
+                "method"     => "DELETE",
+                "authReq"    => true,
+                "urlParam"   => [
+                    "id"        => [
+                        "required"   => true,
+                        "type"       => "int",
+                        "description"=> "id темы из базы данных",
+                        "example"    => "/api/user/theme/1"
+                    ]
+                ],
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "203"      => null,
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ],
+                    "403"      => [
+                        "error" =>  "Это не ваша тема"
+                    ]
+                ]
+            ], // /api/user/theme - DELETE
+            [
+                "url"        => ("/api/user/group/students"),
+                "description"=> "Посмотреть всех одногруппников",
+                "group"      => "group",
+                "method"     => "GET",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+            ], // /api/user/group/students - GET
+            [
+                "url"        => ("/api/user/group"),
+                "description"=> "Посмотреть информацию о своей группе",
+                "group"      => "group",
+                "method"     => "GET",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "200"  =>  [
+                        "id"        => 1,
+                        "Name"      => "171",
+                        "university"=> "ЧНУ",
+                        "headman"   => "Test2"
+                    ],
+                    "400" =>   [ 
+                        "error"   => "Unauthorized"
+                    ]
+                ]
+            ], // /api/user/group - GET
+            [
+                "url"        => "/api/user/grouprequests/{id}",
+                "description"=> "Подать заявку на вступление в группу( только один )",
+                "group"      => "group",
+                "method"     => "POST",
+                "authReq"    => true,
+                "urlParam"   => [
+                    "id"        => [
+                        "required"   => true,
+                        "type"       => "int",
+                        "description"=> "id группы из базы данных",
+                        "example"    => "/api/user/grouprequests/1"
+                    ]
+                ],
+                "queryParam" => null,
+                "bodyParam"  => null,
+                "response"   => [
+                    "200"      => [
+                            "id_User" => 3,
+                            "id_Group"=> 1,
+                            "id"      => 1
+                    ],
+                    "401"      => [
+                        "error"       => "Unauthorized"
+                    ],
+                    "403"      => [
+                        "error"       => "Вы уже состоите в группе"
+                    ],
+                    "403"      => [
+                        "error"       => "Вы уже подали запрос( больше одного нельзя )"
+                    ]
+                ]
+            ], // /api/user/grouprequests/{id} - post
+            [
+                "url"        => ("/api/user/grouprequests"),
+                "description"=> "Удалить запрос на вступление в группу",
+                "group"      => "group",
+                "method"     => "DELETE",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "203"      => null,
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ],
+                    "404"      => [
+                        "error" =>  "У вас нет запроса"
+                    ]
+                ]
+            ], // /api/user/grouprequests - DELETE
+            [
+                "url"        => ("/api/user/searchgroup"),
+                "description"=> "Найти группу по названию или(и) университету",
+                "group"      => "group",
+                "method"     => "GET",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,                    
+                "bodyParam"  => [
+                    "id_University"     => [
+                        "required"   => false,
+                        "type"       => "int",
+                        "description"=> "id университета из базы данных"
+                    ],
+                    "Name"     => [
+                        "required"   => false,
+                        "type"       => "string",
+                        "description"=> "Название группы"
+                    ]
+                ],
+                "response"   => [
+                    "200"  =>  [
+                        "id"        => 1,
+                        "Name"      => "171",
+                        "university"=> "ЧНУ",
+                        "headman"   => "Test2"
+                    ],
+                    "400" =>   [ 
+                        "error"   => "Unauthorized"
+                    ],
+                    "403" =>   [
+                        "error"   => "Нет данных"
+                    ]
+                ]
+            ], // /api/user/searchgroup - GET
+            [
+                "url"        => ("/api/user/university"),
+                "description"=> "Посмотреть все университеты",
+                "group"      => "university",
+                "method"     => "GET",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+            ], // /api/user/university - GET
+            [
+                "url"        => ("/api/user/university/{id}"),
+                "description"=> "Посмотреть один университет",
+                "group"      => "university",
+                "method"     => "GET",
+                "authReq"    => true,
+                "urlParam"   => [
+                    "id"        => [
+                        "required"   => true,
+                        "type"       => "int",
+                        "description"=> "id университета из базы данных",
+                        "example"    => "/api/user/university/1"
+                    ]
+                ],
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "200"      => [
+                        "id"        => 1,
+                        "ru_Name"   => "ЧНУ",
+                        "eng_Name"  =>"CHMNU",
+                        "id_Country"=> 1,
+                        "id_City"   => 1
+                    ],
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ]
+                ]
+            ], // /api/user/university - GET
+            [
+                "url"        => ("/api/user/country"),
+                "description"=> "Посмотреть все страны",
+                "group"      => "country",
+                "method"     => "GET",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+            ], // /api/user/country - GET
+            [
+                "url"        => ("/api/user/country/{id}"),
+                "description"=> "Посмотреть одну страну",
+                "group"      => "country",
+                "method"     => "GET",
+                "authReq"    => true,
+                "urlParam"   => [
+                    "id"        => [
+                        "required"   => true,
+                        "type"       => "int",
+                        "description"=> "id страны из базы данных",
+                        "example"    => "/api/user/country/1"
+                    ]
+                ],
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "200"      => [
+                        "id"        => 1,
+                        "ru_Name"   => "Украина",
+                        "eng_Name"  => "Ukraine"
+                    ],
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ]
+                ]
+            ], // /api/user/country - GET
+            [
+                "url"        => ("/api/user/city"),
+                "description"=> "Посмотреть все города",
+                "group"      => "city",
+                "method"     => "GET",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+            ], // /api/user/city - GET
+            [
+                "url"        => ("/api/user/city/{id}"),
+                "description"=> "Посмотреть один город",
+                "group"      => "city",
+                "method"     => "GET",
+                "authReq"    => true,
+                "urlParam"   => [
+                    "id"        => [
+                        "required"   => true,
+                        "type"       => "int",
+                        "description"=> "id города из базы данных",
+                        "example"    => "/api/user/city/1"
+                    ]
+                ],
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "200"      => [
+                        "id"        => 1,
+                        "ru_Name"   => "Киев",
+                        "eng_Name"  => "Kiev",
+                        "id_Country"=> 1
+                    ],
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ]
+                ]
+            ], // /api/user/city - GET
         ];
+        switch( auth()->user()->Privilege ){
+            case 1:
+                array_push($ret,
+                [
+                    "url"        => ("/api/user/discipline"),
+                    "description"=> "Создать дисциплину",
+                    "group"      => "discipline",
+                    "method"     => "POST",
+                    "authReq"    => true,
+                    "urlParam"   => null,
+                    "queryParam" => null,                    
+                    "bodyParam"  => [
+                        'ru_Name'          => [
+                            "required"    => false,
+                            "description" => "Название дисциплины на русском",
+                            "type"        => "string"
+                        ],
+                        'eng_Name'          => [
+                            "required"    => false,
+                            "description" => "Название дисциплины на английском",
+                            "type"        => "string"
+                        ]
+                    ],
+                    "response"   => [
+                        "200"      => [
+                            "id"        => 1,
+                            "ru_Name"   => "Инженерия программного обеспечения",
+                            "eng_Name"  => "Software engineering",
+                            "id_Group"  => null,
+                            "global"    => 0
+                        ],
+                        "401"      => [
+                            "error"   => "Unauthorized"
+                        ]
+                    ]
+                ], // /api/user/discipline - POST
+                [
+                    "url"        => ("/api/user/subject"),
+                    "description"=> "Создать предмет",
+                    "group"      => "subject",
+                    "method"     => "POST",
+                    "authReq"    => true,
+                    "urlParam"   => null,
+                    "queryParam" => null,                    
+                    "bodyParam"  => [
+                        'ru_Name'          => [
+                            "required"    => false,
+                            "description" => "Название предмета на русском",
+                            "type"        => "string"
+                        ],
+                        'eng_Name'          => [
+                            "required"    => false,
+                            "description" => "Название предмета на английском",
+                            "type"        => "string"
+                        ],
+                        'id_Discipline'          => [
+                            "required"    => false,
+                            "description" => "id дисциплины из базы данных",
+                            "type"        => "int"
+                        ]
+                    ],
+                    "response"   => [
+                        "200"      => [
+                            "id"        => 1,
+                            "ru_Name"   => "Дискретная математика",
+                            "eng_Name"  => "Discrete Math",
+                            "id_Group"  => null,
+                            "id_Discipline" => 2,
+                            "global"    => 0
+                            
+                        ],
+                        "401"      => [
+                            "error"   => "Unauthorized"
+                        ]
+                    ]
+                ], // /api/user/subject - POST
+                [
+                    "url"        => ("/api/user/theme"),
+                    "description"=> "Создать тему",
+                    "group"      => "theme",
+                    "method"     => "POST",
+                    "authReq"    => true,
+                    "urlParam"   => null,
+                    "queryParam" => null,                    
+                    "bodyParam"  => [
+                        'ru_Name'          => [
+                            "required"    => false,
+                            "description" => "Название темы на русском",
+                            "type"        => "string"
+                        ],
+                        'eng_Name'          => [
+                            "required"    => false,
+                            "description" => "Название темы на английском",
+                            "type"        => "string"
+                        ],
+                        'id_Subject'          => [
+                            "required"    => false,
+                            "description" => "id предмета из базы данных",
+                            "type"        => "int"
+                        ]
+                    ],
+                    "response"   => [
+                        "200"      => [
+                            "id"        => 1,
+                            "ru_Name"   => "Двоичный код",
+                            "eng_Name"  => "Binary code",
+                            "id_Group"  => null,
+                            'id_Subject' => 1,
+                            "global"    => 0
+                        ],
+                        "401"      => [
+                            "error"   => "Unauthorized"
+                        ]
+                    ]
+                ], // /api/user/theme - POST
+            );
+            break;
+            case 2:
+                array_push($ret,
+                [
+                    "url"        => ("/api/user/discipline"),
+                    "description"=> "Создать дисциплину",
+                    "group"      => "discipline",
+                    "method"     => "POST",
+                    "authReq"    => true,
+                    "urlParam"   => null,
+                    "queryParam" => null,                    
+                    "bodyParam"  => [
+                        'ru_Name'          => [
+                            "required"    => false,
+                            "description" => "Название дисциплины на русском",
+                            "type"        => "string"
+                        ],
+                        'eng_Name'          => [
+                            "required"    => false,
+                            "description" => "Название дисциплины на английском",
+                            "type"        => "string"
+                        ],
+                        'withGroup'          => [
+                            "required"    => false,
+                            "description" => "false - личная, true - для группы",
+                            "type"        => "bool"
+                        ],
+                    ],
+                    "response"   => [
+                        "200"      => [
+                            "id"        => 1,
+                            "ru_Name"   => "Инженерия программного обеспечения",
+                            "eng_Name"  => "Software engineering",
+                            "id_Group"  => null,
+                            "global"    => 0
+                        ],
+                        "401"      => [
+                            "error"   => "Unauthorized"
+                        ]
+                    ]
+                ], // /api/user/discipline - POST (+ withGroup)
+                [
+                    "url"        => ("/api/user/subject"),
+                    "description"=> "Создать предмет",
+                    "group"      => "subject",
+                    "method"     => "POST",
+                    "authReq"    => true,
+                    "urlParam"   => null,
+                    "queryParam" => null,                    
+                    "bodyParam"  => [
+                        'ru_Name'          => [
+                            "required"    => false,
+                            "description" => "Название предмета на русском",
+                            "type"        => "string"
+                        ],
+                        'eng_Name'          => [
+                            "required"    => false,
+                            "description" => "Название предмета на английском",
+                            "type"        => "string"
+                        ],
+                        'id_Discipline'          => [
+                            "required"    => false,
+                            "description" => "id дисциплины из базы данных",
+                            "type"        => "int"
+                        ],
+                        'withGroup'          => [
+                            "required"    => false,
+                            "description" => "false - личная, true - для группы",
+                            "type"        => "bool"
+                        ],
+                    ],
+                    "response"   => [
+                        "200"      => [
+                            "id"        => 1,
+                            "ru_Name"   => "Дискретная математика",
+                            "eng_Name"  => "Discrete Math",
+                            "id_Group"  => null,
+                            "id_Discipline" => 2,
+                            "global"    => 0
+                            
+                        ],
+                        "401"      => [
+                            "error"   => "Unauthorized"
+                        ]
+                    ]
+                ], // /api/user/subject - POST (+ withGroup)
+                [
+                    "url"        => ("/api/user/theme"),
+                    "description"=> "Создать тему",
+                    "group"      => "theme",
+                    "method"     => "POST",
+                    "authReq"    => true,
+                    "urlParam"   => null,
+                    "queryParam" => null,                    
+                    "bodyParam"  => [
+                        'ru_Name'          => [
+                            "required"    => false,
+                            "description" => "Название темы на русском",
+                            "type"        => "string"
+                        ],
+                        'eng_Name'          => [
+                            "required"    => false,
+                            "description" => "Название темы на английском",
+                            "type"        => "string"
+                        ],
+                        'id_Subject'          => [
+                            "required"    => false,
+                            "description" => "id предмета из базы данных",
+                            "type"        => "int"
+                        ],
+                        'withGroup'          => [
+                            "required"    => false,
+                            "description" => "false - личная, true - для группы",
+                            "type"        => "bool"
+                        ],
+                    ],
+                    "response"   => [
+                        "200"      => [
+                            "id"        => 1,
+                            "ru_Name"   => "Двоичный код",
+                            "eng_Name"  => "Binary code",
+                            "id_Group"  => null,
+                            'id_Subject' => 1,
+                            "global"    => 0
+                        ],
+                        "401"      => [
+                            "error"   => "Unauthorized"
+                        ]
+                    ]
+                ], // /api/user/theme - POST (+ withGroup)
+            );
+            break;
+            case 3:
+            case 4:
+                array_push($ret,
+                [
+                    "url"        => ("/api/user/discipline"),
+                    "description"=> "Создать дисциплину",
+                    "group"      => "discipline",
+                    "method"     => "POST",
+                    "authReq"    => true,
+                    "urlParam"   => null,
+                    "queryParam" => null,                    
+                    "bodyParam"  => [
+                        'ru_Name'          => [
+                            "required"    => false,
+                            "description" => "Название дисциплины на русском",
+                            "type"        => "string"
+                        ],
+                        'eng_Name'          => [
+                            "required"    => false,
+                            "description" => "Название дисциплины на английском",
+                            "type"        => "string"
+                        ],
+                        'global'          => [
+                            "required"    => false,
+                            "description" => "false - личная, true - для всех",
+                            "type"        => "bool"
+                        ],
+                    ],
+                    "response"   => [
+                        "200"      => [
+                            "id"        => 1,
+                            "ru_Name"   => "Инженерия программного обеспечения",
+                            "eng_Name"  => "Software engineering",
+                            "id_Group"  => null,
+                            "global"    => 0
+                        ],
+                        "401"      => [
+                            "error"   => "Unauthorized"
+                        ]
+                    ]
+                ], // /api/user/discipline - POST (+ global)
+                [
+                    "url"        => ("/api/user/subject"),
+                    "description"=> "Создать предмет",
+                    "group"      => "subject",
+                    "method"     => "POST",
+                    "authReq"    => true,
+                    "urlParam"   => null,
+                    "queryParam" => null,                    
+                    "bodyParam"  => [
+                        'ru_Name'          => [
+                            "required"    => false,
+                            "description" => "Название предмета на русском",
+                            "type"        => "string"
+                        ],
+                        'eng_Name'          => [
+                            "required"    => false,
+                            "description" => "Название предмета на английском",
+                            "type"        => "string"
+                        ],
+                        'id_Discipline'          => [
+                            "required"    => false,
+                            "description" => "id дисциплины из базы данных",
+                            "type"        => "int"
+                        ],
+                        'global'          => [
+                            "required"    => false,
+                            "description" => "false - личная, true - для всех",
+                            "type"        => "bool"
+                        ],
+                    ],
+                    "response"   => [
+                        "200"      => [
+                            "id"        => 1,
+                            "ru_Name"   => "Дискретная математика",
+                            "eng_Name"  => "Discrete Math",
+                            "id_Group"  => null,
+                            "id_Discipline" => 2,
+                            "global"    => 0
+                            
+                        ],
+                        "401"      => [
+                            "error"   => "Unauthorized"
+                        ]
+                    ]
+                ], // /api/user/subject - POST (+ global)
+                [
+                    "url"        => ("/api/user/theme"),
+                    "description"=> "Создать тему",
+                    "group"      => "theme",
+                    "method"     => "POST",
+                    "authReq"    => true,
+                    "urlParam"   => null,
+                    "queryParam" => null,                    
+                    "bodyParam"  => [
+                        'ru_Name'          => [
+                            "required"    => false,
+                            "description" => "Название темы на русском",
+                            "type"        => "string"
+                        ],
+                        'eng_Name'          => [
+                            "required"    => false,
+                            "description" => "Название темы на английском",
+                            "type"        => "string"
+                        ],
+                        'id_Subject'          => [
+                            "required"    => false,
+                            "description" => "id предмета из базы данных",
+                            "type"        => "int"
+                        ],
+                        'global'          => [
+                            "required"    => false,
+                            "description" => "false - личная, true - для всех",
+                            "type"        => "bool"
+                        ],
+                    ],
+                    "response"   => [
+                        "200"      => [
+                            "id"        => 1,
+                            "ru_Name"   => "Двоичный код",
+                            "eng_Name"  => "Binary code",
+                            "id_Group"  => null,
+                            'id_Subject' => 1,
+                            "global"    => 0
+                        ],
+                        "401"      => [
+                            "error"   => "Unauthorized"
+                        ]
+                    ]
+                ], // /api/user/theme - POST (+ global)
+            );
+            break;
+        }
+
+
         return [
             "User's info coming soon..." => true,
         ];

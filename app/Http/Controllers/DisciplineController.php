@@ -26,8 +26,6 @@ class DisciplineController extends Controller
     public function addDisc( Request $request )
     {
         $request->validate([
-            'id_User' => 'exists:users,id',
-            'id_Group'=> 'exists:groups,id',
             'global' => 'boolean',
             'withGroup' => 'boolean'
         ]);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Groups;
 use App\User;
+use App\University;
 class GroupController extends Controller
 {
     // beautifull response - without id
@@ -13,9 +14,9 @@ class GroupController extends Controller
             'id_University' => 'exists:universities,id'
         ]);
         $group = Groups::find( $Rgroup ?? auth()->user()->id_Group );
-        $headm = \App\User::find( $group->id_Headman );
-        $uni = \App\University::find( $group->id_University );
-        $group->university = $uni->Name ?? null;
+        $headm = User::find( $group->id_Headman );
+        $uni = University::find( $group->id_University );
+        $group->university = $uni->ru_Name ?? null;
         $group->headman = $headm->Login;
         unset( $group->id_University, $group->id_Headman );
         return response()->json( $group, 200 );

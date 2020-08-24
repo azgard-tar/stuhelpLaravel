@@ -26,22 +26,19 @@ class SubjectController extends Controller
     public function addSubj( Request $request )
     {
         $request->validate([
-            'id_User' => 'exists:users,id',
-            'id_Group' => 'exists:groups,id',
             'id_Discipline' => 'exists:disciplines,id',
             'global' => 'boolean',
             'withGroup' => 'boolean'
         ]);
-
         $subject = new Subject;
         $subject->ru_Name = $request->ru_Name;
         $subject->eng_Name = $request->eng_Name;
         $subject->id_Group = $request->withGroup ? ( auth()->user()->Privilege == 2 ? auth()->user()->id_Group : null ) : null;
         $subject->id_User = auth()->user()->id;
         $subject->id_Discipline = $request->id_Discipline;
-        if( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 )
-            $subject->global = $request->global;
+        $subject->global = ( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 ) ? $request->global : false;
         $subject->save();
+        
         return response()->json( Subject::find( $subject->id ) , 200 );
     }
     // update

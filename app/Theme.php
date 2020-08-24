@@ -11,6 +11,6 @@ class Theme extends Model
     ];
 
     protected $hidden = [
-        'created_at','updated_at'
+        'created_at','updated_at','id_User'
     ];
 }

@@ -26,8 +26,6 @@ class ThemeController extends Controller
     public function addTheme( Request $request )
     {
         $request->validate([
-            'id_User' => 'exists:users,id',
-            'id_Group' => 'exists:groups,id',
             'id_Subject' => 'exists:subjects,id',
             'global' => 'boolean',
             'withGroup' => 'boolean'
@@ -39,8 +37,7 @@ class ThemeController extends Controller
         $theme->id_Group = $request->withGroup ? ( auth()->user()->Privilege == 2 ? auth()->user()->id_Group : null ) : null;
         $theme->id_User = auth()->user()->id;
         $theme->id_Subject = $request->id_Subject;
-        if( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 )
-            $theme->global = $request->global;
+        $theme->global = ( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 ) ? $request->global : false;
         $theme->save();
         return response()->json( Theme::find( $theme->id ) , 200 );
     }
