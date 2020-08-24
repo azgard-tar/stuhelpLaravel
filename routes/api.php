@@ -94,7 +94,7 @@ Route::group([
         Route::put('group', 'GroupController@updateGroup');
 
         Route::get('grouprequests', 'GroupRequestsController@getList');
-        Route::get('grouprequests/{user}', 'GroupRequestsController@applyRequest');
+        Route::get('grouprequests/{grouprequest}', 'GroupRequestsController@applyRequest');
     }
 });
 

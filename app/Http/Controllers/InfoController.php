@@ -1360,14 +1360,116 @@ class InfoController extends Controller
         }
 
 
-        return [
-            "User's info coming soon..." => true,
-        ];
+        return $ret;
     }
     public function headmanInfo(){
-        return [
-            "Headman's info coming soon..." => true,
+        $ret = [
+            [
+                "url"        => ("/api/headman/group"),
+                "description"=> "Изменить информацию о своей группе",
+                "group"      => "group",
+                "method"     => "PUT",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,                    
+                "bodyParam"  => [
+                    "id_Headman" => [
+                        "required" => false,
+                        "type" => "int",
+                        "description" => "id нового старосты группы"
+                    ],
+                    "id_University" => [
+                        "required" => false,
+                        "type" => "int",
+                        "description" => "id нового университета группы"
+                    ]
+                ],
+                "response"   => [
+                    "200"  =>  [
+                        "id"        => 1,
+                        "Name"      => "271",
+                        "university"=> "ЧНУ",
+                        "headman"   => "Petya"
+                    ],
+                    "400" =>   [ 
+                        "error"   => "Unauthorized"
+                    ]
+                ]
+            ], // /api/headman/group - put
+            [
+                "url"        => "/api/headman/grouprequests/{id}",
+                "description"=> "Принять заявку на вступление",
+                "group"      => "group",
+                "method"     => "GET",
+                "authReq"    => true,
+                "urlParam"   => [
+                    "id"        => [
+                        "required"   => true,
+                        "type"       => "int",
+                        "description"=> "id запроса из /api/headman/grouprequests",
+                        "example"    => "/api/headman/grouprequests/1"
+                    ]
+                ],
+                "queryParam" => null,
+                "bodyParam"  => null,
+                "response"   => [
+                    "200"      => [
+                        "id"        => 1,
+                        "Surname"   => null,
+                        "Login"     => "test",
+                        "name"      => "Vasya",
+                        "email"     => "test@google.com",
+                        "email_verified_at"=> null,
+                        "created_at"=> "2020-07-31T10:51:52.000000Z",
+                        "updated_at"=> "2020-07-31T10:51:52.000000Z",
+                        "id_Group"  => null,
+                        "LastLogin" => null,
+                        "id_City"   => null,
+                        "id_Country"=> null,
+                        "Privilege" => 4,
+                        "Avatar"    => "images/none.jpg"
+                    ],
+                    "401"      => [
+                        "error"       => "Unauthorized"
+                    ],
+                    "403"      => [
+                        "error"       => "Вы не староста этой группы"
+                    ],
+                    "403"      => [
+                        "error"       => "Запроса от этого пользователя нет"
+                    ]
+                ]
+            ], // /api/headman/grouprequests/{id} - GET
+            [
+                "url"        => ("/api/headman/grouprequests"),
+                "description"=> "Посмотреть все запросы на вступление в группу",
+                "group"      => "group",
+                "method"     => "GET",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "200"      => [
+                        [
+                            "id"      => 1,
+                            "id_User" => 3
+                        ],
+                        [
+                            "id"      => 2,
+                            "id_User" => 5
+                        ],
+                    ],
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ],
+                    "403"      => [
+                        "error"   => "Вы не староста этой группы"
+                    ]
+                ]
+            ], // /api/headman/grouprequests - GET
         ];
+        return $ret;
     }
     public function moderInfo(){
         return [

@@ -47,6 +47,11 @@ class PrivilegeController extends Controller
                 return response()->json("У этой группы уже есть староста", 400);
         elseif( ! $groupId )
             return response()->json("Укажите группу( параметр id_Group )", 400);
+        
+        $group = Groups::find( $groupId );
+        $group->id_Headman = $user->id;
+        $group->save();
+        
         $user->id_Group = $groupId;
         $user->Privilege = 2;
         $user->save();

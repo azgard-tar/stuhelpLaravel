@@ -5,15 +5,21 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\GroupRequests;
 use App\Groups;
+use App\User;
+
 class GroupRequestsController extends Controller
 {
     // get list ( h, m, a )
     public function getList( Request $request ){
-        return response()->json( 
-            GroupRequests::where(
-                'id_Group', $request->user()->id_Group 
-            ), 200 
-        );
+        $group = Groups::find( $request->user()->id_Group );
+        if( $group->id_Headman == $request->user()->id )
+            return response()->json( 
+                GroupRequests::where(
+                    'id_Group', $request->user()->id_Group 
+                )->get(), 200 
+            );
+        else
+            return response()->json('Вы не староста этой группы', 403);
     }
     // get all ( m , a )
     public function getAll( ){
@@ -33,26 +39,26 @@ class GroupRequestsController extends Controller
         return response()->json($groupRequest, 200 );
     }
     // apply request( h )
-    public function applyRequest( Request $request, User $user ){
-        $grouprequest = GroupRequests::where('id_User',$user->id )->first();
-        if( count( $grouprequest ) !== 0 ){
+    public function applyRequest( Request $request, GroupRequests $grouprequest ){
+        if( $grouprequest ){
             $group = Groups::find( $grouprequest->id_Group );
             if( $request->user()->id === $group->id_Headman ){
+                $user = User::find( $grouprequest->id_User );
                 $user->id_Group = $group->id;
                 $user->save();
                 $grouprequest->delete();
-                return response()->json( $user , 403);
+                return response()->json( $user , 200);
             }
             return response()->json('Вы не староста этой группы', 403);
         }
-        return response()->json('Запросов от этого пользователя нет', 403);
+        return response()->json('Этого запроса нет', 403);
     }
     // delete ( owner, m, a )
     public function deleteRequest( Request $request, GroupRequests $grouprequest = null ){
-        $req = GroupRequests::where("id_User",auth()->user()->id)->orWhere("id",$grouprequest->id)->first();
-        if( $req )
+        $req = GroupRequests::where("id_User",auth()->user()->id)->orWhere("id",$grouprequest->id ?? 0)->first();
+        if( is_null($req) )
             return response()->json('У вас нет запроса', 404);
-        $grouprequest->delete();
+        $req->delete();
         return response()->json(null, 203);
     }
 }
