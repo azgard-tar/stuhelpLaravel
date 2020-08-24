@@ -72,6 +72,7 @@ Route::group([
         Route::delete('grouprequests', 'GroupRequestsController@deleteRequest');
         Route::get('searchgroup','GroupController@searchGroup');
         Route::get('group','GroupController@beautifulGet'); // get info without id_Uni...
+        Route::get('group/leave','GroupController@leaveFromGroup');
 
         Route::get('university/{university}', 'UniversityController@getOneUni');
         Route::get('university', 'UniversityController@getAllUni');
@@ -110,10 +111,10 @@ Route::group([
         Route::put('group/{group}', 'GroupController@updateGroup');
         Route::delete('group/{group}', 'GroupController@deleteGroup');
 
-        Route::get('group/{group}','GroupController@beautifulGet');
+        Route::get('group/{Rgroup}','GroupController@beautifulGet');
 
-        Route::get('grouprequests', 'GroupRequestsController@getAll');
-        Route::delete('grouprequests/{grouprequests}', 'GroupRequestsController@deleteRequest');
+        //Route::get('grouprequests', 'GroupRequestsController@getAll');
+        //Route::delete('grouprequests/{grouprequests}', 'GroupRequestsController@deleteRequest');
 
         Route::post('headman/{user}','PrivilegeController@setHeadman');
 

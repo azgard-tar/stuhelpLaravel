@@ -237,7 +237,7 @@ class InfoController extends Controller
                         "error"       => "Unauthorized"
                     ]
                 ]
-            ], // /api/user/update
+            ], // /api/user/update PUT
             [
                 "url"        => ("/api/user/delete"),
                 "description"=> "Удалить себя",
@@ -253,7 +253,7 @@ class InfoController extends Controller
                         "error"       => "Unauthorized"
                     ]
                 ]
-            ], // /api/user/delete
+            ], // /api/user/delete DELETE
             [
                 "url"        => ("/api/user/image"),
                 "description"=> "Получить аватарку",
@@ -264,7 +264,7 @@ class InfoController extends Controller
                 "queryParam" => null,
                 "bodyParam"  => null,
                 "response"   => null
-            ], // /api/user/image - get
+            ], // /api/user/image - GET
             [
                 "url"        => ("/api/user/image"),
                 "description"=> "Загрузить аватарку",
@@ -292,12 +292,12 @@ class InfoController extends Controller
                         "error"       => "Data not found"
                     ]
                 ]
-            ], // /api/user/image - post
+            ], // /api/user/image - POST
             [
                 "url"        => ("/api/user/privilege"),
                 "description"=> "Получить информацию про свой статус аккаунта",
                 "group"      => "user",
-                "method"     => "DELETE",
+                "method"     => "GET",
                 "authReq"    => true,
                 "urlParam"   => null,
                 "queryParam" => null,                    
@@ -312,7 +312,7 @@ class InfoController extends Controller
                         "error"   => "Unauthorized"
                     ]
                 ]
-            ], // /api/user/privilege
+            ], // /api/user/privilege GET
             [
                 "url"        => ("/api/user/event"),
                 "description"=> "Создать событие",
@@ -807,7 +807,7 @@ class InfoController extends Controller
                         "error"       => "Вы уже подали запрос( больше одного нельзя )"
                     ]
                 ]
-            ], // /api/user/grouprequests/{id} - post
+            ], // /api/user/grouprequests/{id} - POST
             [
                 "url"        => ("/api/user/grouprequests"),
                 "description"=> "Удалить запрос на вступление в группу",
@@ -871,7 +871,7 @@ class InfoController extends Controller
                 "urlParam"   => null,
                 "queryParam" => null,                    
                 "bodyParam"  => null,
-            ], // /api/user/university - GET
+            ], // /api/user/university/{id} - GET
             [
                 "url"        => ("/api/user/university/{id}"),
                 "description"=> "Посмотреть один университет",
@@ -910,7 +910,7 @@ class InfoController extends Controller
                 "urlParam"   => null,
                 "queryParam" => null,                    
                 "bodyParam"  => null,
-            ], // /api/user/country - GET
+            ], // /api/user/country/{id} - GET
             [
                 "url"        => ("/api/user/country/{id}"),
                 "description"=> "Посмотреть одну страну",
@@ -975,7 +975,38 @@ class InfoController extends Controller
                         "error"   => "Unauthorized"
                     ]
                 ]
-            ], // /api/user/city - GET
+            ], // /api/user/city/{id} - GET
+            [
+                "url"        => ("/api/user/group/leave"),
+                "description"=> "Покинуть группу",
+                "group"      => "group",
+                "method"     => "GET",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "200"      => [
+                        "id"        => 1,
+                        "Surname"   => null,
+                        "Login"     => "test",
+                        "name"      => "Vasya",
+                        "email"     => "test@google.com",
+                        "email_verified_at"=> null,
+                        "created_at"=> "2020-07-31T10:51:52.000000Z",
+                        "updated_at"=> "2020-07-31T10:51:52.000000Z",
+                        "id_Group"  => null,
+                        "LastLogin" => null,
+                        "id_City"   => null,
+                        "id_Country"=> null,
+                        "Privilege" => 4,
+                        "Avatar"    => "images/none.jpg"
+                    ],
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ]
+                ]
+            ], // /api/user/group/leave - GET
         ];
         switch( auth()->user()->Privilege ){
             case 1:
@@ -1395,7 +1426,7 @@ class InfoController extends Controller
                         "error"   => "Unauthorized"
                     ]
                 ]
-            ], // /api/headman/group - put
+            ], // /api/headman/group - PUT
             [
                 "url"        => "/api/headman/grouprequests/{id}",
                 "description"=> "Принять заявку на вступление",
@@ -1472,6 +1503,437 @@ class InfoController extends Controller
         return $ret;
     }
     public function moderInfo(){
+        $ret = [
+            [
+                "url"        => ("/api/moder/group/students/{id}"),
+                "description"=> "Посмотреть всех студентов определенной группы",
+                "group"      => "group",
+                "method"     => "GET",
+                "authReq"    => true,
+                "urlParam"   => [
+                    'id' => [
+                        'required'    => true,
+                        'description' => 'id группы'
+                    ]
+                ],
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+            ], // /api/moder/group/students/{id} - GET
+            [
+                "url"        => ("/api/moder/group"),
+                "description"=> "Посмотреть все группы",
+                "group"      => "group",
+                "method"     => "GET",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+            ], // /api/moder/group - GET
+            [
+                "url"        => ("/api/moder/group"),
+                "description"=> "Создать группу",
+                "group"      => "group",
+                "method"     => "POST",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,                    
+                "bodyParam"  => [
+                    "Name" => [
+                        "required" => false,
+                        "type" => "string",
+                        "description" => "название группы"
+                    ],
+                    "id_Headman" => [
+                        "required" => false,
+                        "type" => "int",
+                        "description" => "id старосты группы"
+                    ],
+                    "id_University" => [
+                        "required" => false,
+                        "type" => "int",
+                        "description" => "id университета группы"
+                    ]
+                ],
+                "response"   => [
+                    "200"  =>  [
+                        "id"        => 1,
+                        "Name"      => "271",
+                        "university"=> "ЧНУ",
+                        "headman"   => "Petya"
+                    ],
+                    "400" =>   [ 
+                        "error"   => "Unauthorized"
+                    ]
+                ]
+            ], // /api/moder/group - POST
+            [
+                "url"        => ("/api/moder/group/{id}"),
+                "description"=> "Изменить информацию о группе",
+                "group"      => "group",
+                "method"     => "PUT",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "200"  =>  [
+                        "id"        => 1,
+                        "Name"      => "271",
+                        "university"=> "ЧНУ",
+                        "headman"   => "Petya"
+                    ],
+                    "400" =>   [ 
+                        "error"   => "Unauthorized"
+                    ]
+                ]
+            ], // /api/moder/group/{id} - PUT
+            [
+                "url"        => ("/api/moder/group/{id}"),
+                "description"=> "Удалить группу",
+                "group"      => "group",
+                "method"     => "DELETE",
+                "authReq"    => true,
+                "urlParam"   => [
+                    "id"        => [
+                        "required"   => true,
+                        "type"       => "int",
+                        "description"=> "id группы"
+                    ]
+                ],
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "203"      => null,
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ],
+                    "403"      => [
+                        "error" =>  "Это не ваша группа"
+                    ]
+                ]
+            ], // /api/moder/group/{id} - DELETE
+            [
+                "url"        => ("/api/moder/group/{id}"),
+                "description"=> "Посмотреть информацию определенной группы",
+                "group"      => "group",
+                "method"     => "GET",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "200" => [
+                        "id"        => 1,
+                        "Name"      => "271",
+                        "university"=> "ЧНУ",
+                        "headman"   => "Petya"
+                    ]
+                ]
+            ], // /api/moder/group/{id} - GET
+            [
+                "url"        => ("/api/moder/headman/{id}"),
+                "description"=> "Сделать юзера старостой группы",
+                "group"      => "group",
+                "method"     => "POST",
+                "authReq"    => true,
+                "urlParam"   => [
+                    "id"       => [
+                        "required" => true,
+                        "description"=>"id юзера"
+                    ]
+                ],
+                "queryParam" => null,                    
+                "bodyParam"  => [
+                    "id_Group" => [
+                        "required" => false,
+                        "type"     => "int",
+                        "description" => "id группы, старостой которой будет юзер. По дефолту юзер становиться старостой своей группы"
+                    ]
+                ],
+                "response"   => [
+                    "200" => [
+                        "id"        => 1,
+                        "Surname"   => null,
+                        "Login"     => "test",
+                        "name"      => "Vasya",
+                        "email"     => "test@google.com",
+                        "email_verified_at"=> null,
+                        "created_at"=> "2020-07-31T10:51:52.000000Z",
+                        "updated_at"=> "2020-07-31T10:51:52.000000Z",
+                        "id_Group"  => 1,
+                        "LastLogin" => null,
+                        "id_City"   => null,
+                        "id_Country"=> null,
+                        "Privilege" => 2,
+                        "Avatar"    => "images/none.jpg"
+                    ]
+                ]
+            ], // /api/moder/headman/{id} - GET
+            [
+                "url"        => ("/api/moder/university"),
+                "description"=> "Создать объект университета",
+                "group"      => "university",
+                "method"     => "POST",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,                    
+                "bodyParam"  => [
+                    "ru_Name" => [
+                        "required" => false,
+                        "type"     => "string",
+                        "description"=>"Название университета на русском"
+                    ],
+                    "eng_Name" => [
+                        "required" => false,
+                        "type"     => "string",
+                        "description"=>"Название университета на английском"
+                    ],
+                    "id_City" => [
+                        "required" => false,
+                        "type"     => "int",
+                        "description"=>"id города, в котором находиться университет"
+                    ],
+                    "id_Country" => [
+                        "required" => false,
+                        "type"     => "int",
+                        "description"=>"id страны, в котором находиться университет"
+                    ],
+                ],
+                "response" => [
+                    "200" => [
+                        "ru_Name"   => "НУК",
+                        "eng_Name"  => "NUK",
+                        "id_City"   => "1",
+                        "id_Country"=> "1",
+                        "id"        => 2
+                    ],
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ]
+                ]
+            ], // /api/moder/university - POST
+            [
+                "url"        => ("/api/moder/university/{id}"),
+                "description"=> "Обновить информацию о университете. Смотрите параметры в описании создания университета.",
+                "group"      => "university",
+                "method"     => "PUT",
+                "authReq"    => true,
+                "urlParam"   => [
+                    "id"        => [
+                        "required"   => true,
+                        "type"       => "int",
+                        "description"=> "id университета",
+                        "example"    => "/api/moder/university/1"
+                    ]
+                ],
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "200"      => [
+                        "ru_Name"   => "НУК",
+                        "eng_Name"  => "NUCK",
+                        "id_City"   => "20",
+                        "id_Country"=> "1",
+                        "id"        => 2
+                    ],
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ]
+                ]
+            ], // /api/moder/university/{id} - PUT
+            [
+                "url"        => ("/api/moder/university/{id}"),
+                "description"=> "Удалить объект университета",
+                "group"      => "university",
+                "method"     => "DELETE",
+                "authReq"    => true,
+                "urlParam"   => [
+                    "id"        => [
+                        "required"   => true,
+                        "type"       => "int",
+                        "description"=> "id университета",
+                        "example"    => "/api/moder/university/1"
+                    ]
+                ],
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "203"      => null,
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ]
+                ]
+            ], // /api/moder/university/{id} - DELETE
+            [
+                "url"        => ("/api/moder/city"),
+                "description"=> "Создать объект города",
+                "group"      => "city",
+                "method"     => "POST",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,                    
+                "bodyParam"  => [
+                    "ru_Name" => [
+                        "required" => false,
+                        "type"     => "string",
+                        "description"=>"Название города на русском"
+                    ],
+                    "eng_Name" => [
+                        "required" => false,
+                        "type"     => "string",
+                        "description"=>"Название города на английском"
+                    ],
+                    "id_Country" => [
+                        "required" => false,
+                        "type"     => "int",
+                        "description"=>"id страны, в котором находиться город"
+                    ],
+                ],
+                "response" => [
+                    "200" => [
+                        "ru_Name"   => "Львов",
+                        "eng_Name"  => "Lviv",
+                        "id_Country"=> "1",
+                        "id"        => 2
+                    ],
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ]
+                ]
+            ], // /api/moder/city - POST
+            [
+                "url"        => ("/api/moder/city/{id}"),
+                "description"=> "Обновить информацию о городе. Смотрите параметры в описании создания города.",
+                "group"      => "city",
+                "method"     => "PUT",
+                "authReq"    => true,
+                "urlParam"   => [
+                    "id"        => [
+                        "required"   => true,
+                        "type"       => "int",
+                        "description"=> "id города",
+                        "example"    => "/api/moder/city/1"
+                    ]
+                ],
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "200"      => [
+                        "ru_Name"   => "Львовск",
+                        "eng_Name"  => "Lviv",
+                        "id_Country"=> "1",
+                        "id"        => 2
+                    ],
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ]
+                ]
+            ], // /api/moder/city/{id} - PUT
+            [
+                "url"        => ("/api/moder/city/{id}"),
+                "description"=> "Удалить объект города",
+                "group"      => "city",
+                "method"     => "DELETE",
+                "authReq"    => true,
+                "urlParam"   => [
+                    "id"        => [
+                        "required"   => true,
+                        "type"       => "int",
+                        "description"=> "id города",
+                        "example"    => "/api/moder/city/1"
+                    ]
+                ],
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "203"      => null,
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ]
+                ]
+            ], // /api/moder/city/{id} - DELETE
+            [
+                "url"        => ("/api/moder/country"),
+                "description"=> "Создать объект страны",
+                "group"      => "country",
+                "method"     => "POST",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,                    
+                "bodyParam"  => [
+                    "ru_Name" => [
+                        "required" => false,
+                        "type"     => "string",
+                        "description"=>"Название страны на русском"
+                    ],
+                    "eng_Name" => [
+                        "required" => false,
+                        "type"     => "string",
+                        "description"=>"Название страны на английском"
+                    ],
+                ],
+                "response" => [
+                    "200" => [
+                        "ru_Name"   => "Россия",
+                        "eng_Name"  => "Russia",
+                        "id"        => 2
+                    ],
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ]
+                ]
+            ], // /api/moder/country - POST
+            [
+                "url"        => ("/api/moder/country/{id}"),
+                "description"=> "Обновить информацию о стране. Смотрите параметры в описании создания страны.",
+                "group"      => "country",
+                "method"     => "PUT",
+                "authReq"    => true,
+                "urlParam"   => [
+                    "id"        => [
+                        "required"   => true,
+                        "type"       => "int",
+                        "description"=> "id страны",
+                        "example"    => "/api/moder/country/1"
+                    ]
+                ],
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "200"      => [
+                        "ru_Name"   => "Россия",
+                        "eng_Name"  => "Russia",
+                        "id"        => 2
+                    ],
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ]
+                ]
+            ], // /api/moder/country/{id} - PUT
+            [
+                "url"        => ("/api/moder/country/{id}"),
+                "description"=> "Удалить объект страны",
+                "group"      => "country",
+                "method"     => "DELETE",
+                "authReq"    => true,
+                "urlParam"   => [
+                    "id"        => [
+                        "required"   => true,
+                        "type"       => "int",
+                        "description"=> "id страны",
+                        "example"    => "/api/moder/country/1"
+                    ]
+                ],
+                "queryParam" => null,                    
+                "bodyParam"  => null,
+                "response"   => [
+                    "203"      => null,
+                    "401"      => [
+                        "error"   => "Unauthorized"
+                    ]
+                ]
+            ], // /api/moder/country/{id} - DELETE
+        ];
         return [
             "Moder's info coming soon..." => true,
         ];

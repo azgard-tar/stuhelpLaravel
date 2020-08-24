@@ -55,6 +55,7 @@ class PrivilegeController extends Controller
         $user->id_Group = $groupId;
         $user->Privilege = 2;
         $user->save();
+        
         return response()->json($user,200);
     }
 }

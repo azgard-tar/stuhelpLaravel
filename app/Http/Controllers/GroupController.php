@@ -13,7 +13,7 @@ class GroupController extends Controller
         $request->validate([
             'id_University' => 'exists:universities,id'
         ]);
-        $group = Groups::find( $Rgroup ?? auth()->user()->id_Group );
+        $group = Groups::find( $Rgroup->id ?? auth()->user()->id_Group );
         $headm = User::find( $group->id_Headman );
         $uni = University::find( $group->id_University );
         $group->university = $uni->ru_Name ?? null;
@@ -70,7 +70,7 @@ class GroupController extends Controller
         ]);
 
         $user = User::find($request->id_Headman);
-        if( $user->id_Group ){
+        if( is_null( $user->id_Group ) ){
             return response()->json("Указанный юзер уже состоит в группе",400);
         }
         $group = new Groups;
@@ -99,5 +99,10 @@ class GroupController extends Controller
     public function deleteGroup( Request $request, Groups $group ){
         $group->delete();
         return response()->json( null, 203 );
+    }
+
+    public function leaveFromGroup( ){
+        auth()->user()->id_Group = null;
+        return response()->json(auth()->user(),200);
     }
 }
