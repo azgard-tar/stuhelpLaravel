@@ -1934,13 +1934,94 @@ class InfoController extends Controller
                 ]
             ], // /api/moder/country/{id} - DELETE
         ];
-        return [
-            "Moder's info coming soon..." => true,
-        ];
+        return $ret;
     }
     public function adminInfo(){
-        return [
-            "Admin's info coming soon..." => true,
+        $ret = [
+            [
+                "url"        => "/api/admin/user",
+                "description"=> "Получить информацию про всех юзеров",
+                "group"      => "user",
+                "method"     => "GET",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,
+                "bodyParam"  => null,
+                "response"   => [
+                    "200"      => [
+                        "id"        => 1,
+                        "Surname"   => null,
+                        "Login"     => "test",
+                        "name"      => "Vasya",
+                        "email"     => "test@google.com",
+                        "email_verified_at"=> null,
+                        "created_at"=> "2020-07-31T10:51:52.000000Z",
+                        "updated_at"=> "2020-07-31T10:51:52.000000Z",
+                        "id_Group"  => null,
+                        "LastLogin" => null,
+                        "id_City"   => null,
+                        "id_Country"=> null,
+                        "Privilege" => 4,
+                        "Avatar"    => "images/none.jpg"
+                    ],
+                    "401"      => [
+                        "error"     => "Unauthorized"
+                    ]
+                ]
+            ], // /api/admin/user
+            [
+                "url"        => "/api/admin/user/{id}",
+                "description"=> "Получить информацию про одного юзера",
+                "group"      => "user",
+                "method"     => "GET",
+                "authReq"    => true,
+                "urlParam"   => [
+                    "id"    => [
+                        "required" => true,
+                        "description" => "user's id"
+                    ]
+                ],
+                "queryParam" => null,
+                "bodyParam"  => null,
+                "response"   => [
+                    "200"      => [
+                        "id"        => 1,
+                        "Surname"   => null,
+                        "Login"     => "test",
+                        "name"      => "Vasya",
+                        "email"     => "test@google.com",
+                        "email_verified_at"=> null,
+                        "created_at"=> "2020-07-31T10:51:52.000000Z",
+                        "updated_at"=> "2020-07-31T10:51:52.000000Z",
+                        "id_Group"  => null,
+                        "LastLogin" => null,
+                        "id_City"   => null,
+                        "id_Country"=> null,
+                        "Privilege" => 4,
+                        "Avatar"    => "images/none.jpg"
+                    ],
+                    "401"      => [
+                        "error"     => "Unauthorized"
+                    ]
+                ]
+            ], // /api/admin/user
+            [
+                "url"        => "/api/admin/user",
+                "description"=> "Удалить юзера",
+                "group"      => "user",
+                "method"     => "DELETE",
+                "authReq"    => true,
+                "urlParam"   => null,
+                "queryParam" => null,
+                "bodyParam"  => null,
+                "response"   => [
+                    "203"      => null,
+                    "401"      => [
+                        "error"     => "Unauthorized"
+                    ]
+                ]
+            ], // /api/admin/user
         ];
+        return $ret;
     }
 }
