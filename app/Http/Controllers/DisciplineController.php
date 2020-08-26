@@ -22,6 +22,22 @@ class DisciplineController extends Controller
             200 
         );
     }
+
+    static public function isUsersDisc( $disciplineId, User $user = null ){
+        $ret = Discipline::where( 
+            'id_User', ( $user->id ?? auth()->user()->id  ) 
+        )->orWhere( 
+            'id_Group', ( $user->id_Group ?? ( auth()->user()->id_Group ?? -1 ) ) 
+        )->orWhere(
+            'global', true
+        )->get();
+        foreach( $ret as $el )
+            if( $el->id == $disciplineId )
+                return true;
+        
+        return false;
+    }
+
     // create
     public function addDisc( Request $request )
     {
@@ -35,7 +51,7 @@ class DisciplineController extends Controller
         $discipline->eng_Name = $request->eng_Name;
         $discipline->id_Group = $request->withGroup ? ( auth()->user()->Privilege == 2 ? auth()->user()->id_Group : null ) : null;
         $discipline->id_User = auth()->user()->id;
-        $discipline->global = ( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 ) ? $request->global : false;
+        $discipline->global = ( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 ) ? $request->global ?? 0 : false;
         $discipline->save();
         return response()->json( Discipline::find( $discipline->id ) , 200 );
     }

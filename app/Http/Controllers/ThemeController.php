@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Theme;
+use App\User;
+use App\Http\Controllers\SubjectController;
 
 class ThemeController extends Controller
 {
@@ -22,6 +24,22 @@ class ThemeController extends Controller
             200 
         );
     }
+
+    static public function isUsersThem( $themeId, User $user = null ){
+        $ret = Theme::where( 
+            'id_User', ( $user->id ?? auth()->user()->id  ) 
+        )->orWhere( 
+            'id_Group', ( $user->id_Group ?? ( auth()->user()->id_Group ?? -1 ) ) 
+        )->orWhere(
+            'global', true
+        )->get();
+        foreach( $ret as $el )
+            if( $el->id == $themeId )
+                return true;
+        
+        return false;
+    }
+
     // create
     public function addTheme( Request $request )
     {
@@ -30,6 +48,9 @@ class ThemeController extends Controller
             'global' => 'boolean',
             'withGroup' => 'boolean'
         ]);
+
+        if( ! SubjectController::isUsersSubj( $request->id_Subject ) )
+            return response()->json("Это не ваш предмет",404);
         
         $theme = new Theme;
         $theme->ru_Name = $request->ru_Name;
@@ -37,7 +58,7 @@ class ThemeController extends Controller
         $theme->id_Group = $request->withGroup ? ( auth()->user()->Privilege == 2 ? auth()->user()->id_Group : null ) : null;
         $theme->id_User = auth()->user()->id;
         $theme->id_Subject = $request->id_Subject;
-        $theme->global = ( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 ) ? $request->global : false;
+        $theme->global = ( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 ) ? $request->global ?? 0  : false;
         $theme->save();
         return response()->json( Theme::find( $theme->id ) , 200 );
     }
@@ -48,6 +69,9 @@ class ThemeController extends Controller
             'id_Subject' => 'exists:subjects,id',
             'global' => 'boolean'
         ]);
+
+        if( ! SubjectController::isUsersSubj($request->id_Subject) )
+            return response()->json("Это не ваш предмет",404);
 
         if( $theme->id_User === auth()->user()->id  ) {
             $theme->update( $request->except(['id_User','id_Group','global','id']) );

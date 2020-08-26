@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\AboutEvent;
 use App\User;
+use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\ThemeController;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
@@ -45,6 +47,11 @@ class EventController extends Controller
             'withGroup' => 'boolean'
         ]);
 
+        if( ! SubjectController::isUsersSubj($request->id_Subject) )
+            return response()->json("Это не ваш предмет",404);
+        elseif( ! ThemeController::isUsersThem($request->id_Theme) )
+            return response()->json("Это не ваша тема",404);
+
         AboutEvent::create([
             'Name'          => $request->Name,
             'Description'   => $request->Description,
@@ -79,6 +86,11 @@ class EventController extends Controller
             'id_Subject' => 'exists:subjects,id',
             'id_Theme' => 'exists:themes,id'
         ]);
+
+        if( ! SubjectController::isUsersSubj($request->id_Subject) )
+            return response()->json("Это не ваш предмет",404);
+        elseif( ! ThemeController::isUsersThem($request->id_Theme) )
+            return response()->json("Это не ваша тема",404);
 
         if( $event->id_User === auth()->user()->id  ) {
             $event->update( $request->except('id_User','id_Group','id') );

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Subject;
+use App\User;
+use App\Http\Controllers\DisciplineController;
 
 class SubjectController extends Controller
 {
@@ -22,6 +24,22 @@ class SubjectController extends Controller
             200 
         );
     }
+
+    static public function isUsersSubj( $subjectId, User $user = null ){
+        $ret = Subject::where( 
+            'id_User', ( $user->id ?? auth()->user()->id  ) 
+        )->orWhere( 
+            'id_Group', ( $user->id_Group ?? ( auth()->user()->id_Group ?? -1 ) ) 
+        )->orWhere(
+            'global', true
+        )->get();
+        foreach( $ret as $el )
+            if( $el->id == $subjectId )
+                return true;
+        
+        return false;
+    }
+
     // create
     public function addSubj( Request $request )
     {
@@ -30,13 +48,17 @@ class SubjectController extends Controller
             'global' => 'boolean',
             'withGroup' => 'boolean'
         ]);
+
+        if( ! DisciplineController::isUsersDisc($request->id_Discipline) )
+            return response()->json("Это не ваша дисциплина",404);
+
         $subject = new Subject;
         $subject->ru_Name = $request->ru_Name;
         $subject->eng_Name = $request->eng_Name;
         $subject->id_Group = $request->withGroup ? ( auth()->user()->Privilege == 2 ? auth()->user()->id_Group : null ) : null;
         $subject->id_User = auth()->user()->id;
         $subject->id_Discipline = $request->id_Discipline;
-        $subject->global = ( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 ) ? $request->global : false;
+        $subject->global = ( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 ) ? $request->global ?? 0  : false;
         $subject->save();
         
         return response()->json( Subject::find( $subject->id ) , 200 );
@@ -48,6 +70,9 @@ class SubjectController extends Controller
             'id_Discipline' => 'exists:disciplines,id',
             'global' => 'boolean'
         ]);
+
+        if( ! DisciplineController::isUsersDisc($request->id_Discipline) )
+            return response()->json("Это не ваша дисциплина",404);
         
         if( $subject->id_User === auth()->user()->id  ) {
             $subject->update( $request->except(['id_User','id_Group','global','id']) );

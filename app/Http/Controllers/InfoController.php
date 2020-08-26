@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\User;
 
 class InfoController extends Controller
 {
@@ -16,94 +18,97 @@ class InfoController extends Controller
         ]
     ];
     public function authInfo(){
-        $ret = [
-            [
-                "url"        => ("/api/auth/login"),
-                "description"=> "Обычная авторизация через ?key=value",
-                "group"      => "user",
-                "method"     => "GET",
-                "urlParam"   => null,
-                "queryParam" => [
-                    "email"    => [
-                        "required"    => true,
-                        "description" => "Почта юзера",
+        $ret = 
+        [ 
+            "data" => [
+                [
+                    "url"        => ("/api/auth/login"),
+                    "description"=> "Обычная авторизация через ?key=value",
+                    "group"      => "user",
+                    "method"     => "GET",
+                    "urlParam"   => null,
+                    "queryParam" => [
+                        "email"    => [
+                            "required"    => true,
+                            "description" => "Почта юзера",
+                        ],
+                        "password" => [
+                            "required"    => true,
+                            "description" => "Пароль юзера",
+                        ],
                     ],
-                    "password" => [
-                        "required"    => true,
-                        "description" => "Пароль юзера",
-                    ],
-                ],
-                "bodyParam"  => null,
-                "response"   => [
-                    "200"      => [
-                        "access_token"=> "token",
-                        "token_type"  => "bearer",
-                        "expires_in"  => 3600
-                    ],
-                    "401"      => [
-                        "error"       => "Unauthorized"
+                    "bodyParam"  => null,
+                    "response"   => [
+                        "200"      => [
+                            "access_token"=> "token",
+                            "token_type"  => "bearer",
+                            "expires_in"  => 3600
+                        ],
+                        "401"      => [
+                            "error"       => "Unauthorized"
+                        ]
                     ]
-                ]
-            ], // /api/auth/login
-            [
-                "url"        => ("/api/auth/login123"),
-                "description"=> "Защищенная авторизация через параметр тела запроса Authorization",
-                "group"      => "user",
-                "method"     => "GET",
-                "urlParam"   => null,
-                "queryParam" => null,
-                "bodyParam"  => [
-                    "Authorization"   => [
-                        "required"    => true,
-                        "description" => "Строка авторизации в стандартном формате",
-                        "example"     => "Bearer base64(email:password)"
-                    ]
-                ],
-                "response"   => [
-                    "200"      => [
-                        "access_token"=> "token",
-                        "token_type"  => "bearer",
-                        "expires_in"  => 3600
+                ], // /api/auth/login
+                [
+                    "url"        => ("/api/auth/login123"),
+                    "description"=> "Защищенная авторизация через параметр тела запроса Authorization",
+                    "group"      => "user",
+                    "method"     => "GET",
+                    "urlParam"   => null,
+                    "queryParam" => null,
+                    "bodyParam"  => [
+                        "Authorization"   => [
+                            "required"    => true,
+                            "description" => "Строка авторизации в стандартном формате",
+                            "example"     => "Bearer base64(email:password)"
+                        ]
                     ],
-                    "401"      => [
-                        "error"       => "Unauthorized"
+                    "response"   => [
+                        "200"      => [
+                            "access_token"=> "token",
+                            "token_type"  => "bearer",
+                            "expires_in"  => 3600
+                        ],
+                        "401"      => [
+                            "error"       => "Unauthorized"
+                        ]
                     ]
-                ]
-            ], // /api/auth/login123
-            [
-                "url"        => ("/api/auth/registration"),
-                "description"=> "Регистрация нового пользователя",
-                "group"      => "user",
-                "method"     => "POST",
-                "urlParam"   => null,
-                "queryParam" => null,
-                "bodyParam"  => [
-                    "login"    => [
-                        "required"    => true,
-                        "description" => "Логин юзера"
+                ], // /api/auth/login123
+                [
+                    "url"        => ("/api/auth/registration"),
+                    "description"=> "Регистрация нового пользователя",
+                    "group"      => "user",
+                    "method"     => "POST",
+                    "urlParam"   => null,
+                    "queryParam" => null,
+                    "bodyParam"  => [
+                        "login"    => [
+                            "required"    => true,
+                            "description" => "Логин юзера"
+                        ],
+                        "email"    => [
+                            "required"    => true,
+                            "description" => "Почта юзера"
+                        ],
+                        "password" => [
+                            "required"    => true,
+                            "description" => "Пароль юзера",
+                            "validation"  => $this->consts["password_valid"],
+                        ]
                     ],
-                    "email"    => [
-                        "required"    => true,
-                        "description" => "Почта юзера"
-                    ],
-                    "password" => [
-                        "required"    => true,
-                        "description" => "Пароль юзера",
-                        "validation"  => $this->consts["password_valid"],
+                    "response"   => [
+                        "200"      => [
+                            "message"     => "Successfully registration!"
+                        ],
+                        "401"      => [
+                            "error"       => "Текст ошибки"
+                        ]
                     ]
-                ],
-                "response"   => [
-                    "200"      => [
-                        "message"     => "Successfully registration!"
-                    ],
-                    "401"      => [
-                        "error"       => "Текст ошибки"
-                    ]
-                ]
-            ], // /api/auth/registration
+                ], // /api/auth/registration
+            ]
         ];
         if( auth()->check() ){
-            array_push($ret, 
+            array_push($ret["data"],
                 [
                     "url"        => ("/api/auth/me"),
                     "description"=> "Посмотреть инфу про себя",
@@ -173,10 +178,11 @@ class InfoController extends Controller
                 ], // /api/auth/refresh
             );
         }
-        return $ret;
+        
+        return view('doc',$ret);
     }
     public function userInfo(){
-        $ret = [
+        $ret = ["data"=>[
             [
                 "url"        => ("/api/user/update"),
                 "description"=> "Обновить инфу о себе",
@@ -1007,10 +1013,10 @@ class InfoController extends Controller
                     ]
                 ]
             ], // /api/user/group/leave - GET
-        ];
+        ]];
         switch( auth()->user()->Privilege ){
             case 1:
-                array_push($ret,
+                array_push($ret["data"],
                 [
                     "url"        => ("/api/user/discipline"),
                     "description"=> "Создать дисциплину",
@@ -1126,7 +1132,7 @@ class InfoController extends Controller
             );
             break;
             case 2:
-                array_push($ret,
+                array_push($ret["data"],
                 [
                     "url"        => ("/api/user/discipline"),
                     "description"=> "Создать дисциплину",
@@ -1258,7 +1264,7 @@ class InfoController extends Controller
             break;
             case 3:
             case 4:
-                array_push($ret,
+                array_push($ret["data"],
                 [
                     "url"        => ("/api/user/discipline"),
                     "description"=> "Создать дисциплину",
@@ -1391,10 +1397,10 @@ class InfoController extends Controller
         }
 
 
-        return $ret;
+        return view('doc',$ret);
     }
     public function headmanInfo(){
-        $ret = [
+        $ret = ["data"=>[
             [
                 "url"        => ("/api/headman/group"),
                 "description"=> "Изменить информацию о своей группе",
@@ -1499,11 +1505,11 @@ class InfoController extends Controller
                     ]
                 ]
             ], // /api/headman/grouprequests - GET
-        ];
-        return $ret;
+        ]];
+        return view('doc',$ret);
     }
     public function moderInfo(){
-        $ret = [
+        $ret = ["data"=>[
             [
                 "url"        => ("/api/moder/group/students/{id}"),
                 "description"=> "Посмотреть всех студентов определенной группы",
@@ -1933,11 +1939,11 @@ class InfoController extends Controller
                     ]
                 ]
             ], // /api/moder/country/{id} - DELETE
-        ];
-        return $ret;
+        ]];
+        return view('doc',$ret);
     }
     public function adminInfo(){
-        $ret = [
+        $ret = ["data"=>[
             [
                 "url"        => "/api/admin/user",
                 "description"=> "Получить информацию про всех юзеров",
@@ -2021,7 +2027,7 @@ class InfoController extends Controller
                     ]
                 ]
             ], // /api/admin/user
-        ];
-        return $ret;
+        ]];
+        return view('doc',$ret);
     }
 }

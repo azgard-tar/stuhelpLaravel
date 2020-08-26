@@ -54,6 +54,7 @@ Route::group([
 
         Route::post('discipline','DisciplineController@addDisc'); // C
         Route::get('discipline','DisciplineController@getUserDisc'); // R
+        Route::get('discipline/{discipline}','DisciplineController@isUsersDisc');
         Route::put('discipline/{discipline}','DisciplineController@updateDisc'); // U
         Route::delete('discipline/{discipline}','DisciplineController@deleteDisc'); // D
 
