@@ -40,6 +40,22 @@ class ThemeController extends Controller
         return false;
     }
 
+    protected function checkName( Request $request )
+    {
+        $ret = Theme::where( 
+            'id_User', auth()->user()->id 
+        )->orWhere( 
+            'id_Group', auth()->user()->id_Group ?? -1  
+        )->orWhere(
+            'global', true
+        )->get();
+        foreach( $ret as $el )
+            if( mb_strtolower(trim($el->ru_Name )) == mb_strtolower(trim($request->ru_Name )) 
+             || mb_strtolower(trim($el->eng_Name)) == mb_strtolower(trim($request->eng_Name)) )
+                return "no";
+        return "ok";
+    }
+
     // create
     public function addTheme( Request $request )
     {
@@ -51,6 +67,8 @@ class ThemeController extends Controller
 
         if( ! SubjectController::isUsersSubj( $request->id_Subject ) )
             return response()->json("Это не ваш предмет",404);
+        if( $this->checkName($request) !== "ok" )
+            return response()->json("У вас уже есть тема с таким названием",400);
         
         $theme = new Theme;
         $theme->ru_Name = $request->ru_Name;
@@ -72,6 +90,8 @@ class ThemeController extends Controller
 
         if( ! SubjectController::isUsersSubj($request->id_Subject) )
             return response()->json("Это не ваш предмет",404);
+        if( $this->checkName($request) !== "ok" )
+            return response()->json("У вас уже есть тема с таким названием",400);
 
         if( $theme->id_User === auth()->user()->id  ) {
             $theme->update( $request->except(['id_User','id_Group','global','id']) );
