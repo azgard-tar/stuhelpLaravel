@@ -26,6 +26,7 @@ Route::group([
     Route::get('login', 'AuthController@login')->name('login');
     Route::get('login123', 'AuthController@loginTest')->name('login123');
     Route::post('registration', 'AuthController@registration');
+    Route::post('recover', 'AuthController@recover');
     if( auth()->check() ){
         Route::get('logout', 'AuthController@logout');
         Route::get('refresh', 'AuthController@refresh');
@@ -34,9 +35,11 @@ Route::group([
 });
 
 Route::group([
-    'prefix' => 'user',
-    'middleware' => 'verified'
+    'prefix' => 'user'
 ], function () {
+    Route::get('verify/{verification_code}', 'AuthController@verifyUser');
+    Route::get('password/{verification_code}', 'AuthController@resetPasswordView');
+    Route::post('password/{verification_code}', 'AuthController@resetPassword');
     if( auth()->check() ){
         Route::get('/','InfoController@userInfo');
         Route::put('update', 'UserController@userUpdate');
@@ -89,8 +92,7 @@ Route::group([
 });
 
 Route::group([
-    'prefix' => 'headman',
-    'middleware' => 'verified'
+    'prefix' => 'headman'
 ], function () {
     if( auth()->check() && ( 2 <= auth()->user()->Privilege 
     && 4 >= auth()->user()->Privilege ) ){ // headman, moder, admin
@@ -103,8 +105,7 @@ Route::group([
 });
 
 Route::group([
-    'prefix' => 'moder',
-    'middleware' => 'verified'
+    'prefix' => 'moder'
 ], function () {
     if( auth()->check() && ( 3 == auth()->user()->Privilege
     || 4 == auth()->user()->Privilege ) ){ // moder, admin
