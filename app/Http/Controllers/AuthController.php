@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
+use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
@@ -81,6 +82,8 @@ class AuthController extends Controller
         $user->email = $inputs['email'];
         $user->password = Hash::make($inputs['password']);
         $user->save();
+
+        event(new Registered($user));
 
         return response()->json(['message' => 'Successfully registration!'],200);
     }

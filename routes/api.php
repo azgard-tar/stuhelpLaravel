@@ -34,7 +34,8 @@ Route::group([
 });
 
 Route::group([
-    'prefix' => 'user'
+    'prefix' => 'user',
+    'middleware' => 'verified'
 ], function () {
     if( auth()->check() ){
         Route::get('/','InfoController@userInfo');
@@ -88,7 +89,8 @@ Route::group([
 });
 
 Route::group([
-    'prefix' => 'headman'
+    'prefix' => 'headman',
+    'middleware' => 'verified'
 ], function () {
     if( auth()->check() && ( 2 <= auth()->user()->Privilege 
     && 4 >= auth()->user()->Privilege ) ){ // headman, moder, admin
@@ -101,7 +103,8 @@ Route::group([
 });
 
 Route::group([
-    'prefix' => 'moder'
+    'prefix' => 'moder',
+    'middleware' => 'verified'
 ], function () {
     if( auth()->check() && ( 3 == auth()->user()->Privilege
     || 4 == auth()->user()->Privilege ) ){ // moder, admin
@@ -141,7 +144,8 @@ Route::group([
 });
 
 Route::group([
-    'prefix' => 'admin'
+    'prefix' => 'admin',
+    'middleware' => 'verified'
 ], function () {
     if( auth()->check() && 4 == auth()->user()->Privilege ){ // for admins
         Route::get('/','InfoController@adminInfo');
