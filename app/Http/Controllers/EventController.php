@@ -15,8 +15,8 @@ class EventController extends Controller
 
     public function getOne( Request $request, AboutEvent $event )
     {
-        return ( $event->id_User === $user->id || 
-        !is_null( $event->id_Group ) && $event->id_Group === $user->id_Group  
+        return ( $event->id_User === auth()->user()->id || 
+        !is_null( $event->id_Group ) && $event->id_Group === auth()->user()->id_Group  
             ) ? 
             response()->json( $event, 200 ) : 
             response()->json( "This event is not for you", 403 );   
@@ -40,16 +40,16 @@ class EventController extends Controller
 
         $request->validate([
             'EvWhen' => 'date|after_or_equal:today',
-            'EvWhenEnd' => 'date|after:EvWhen',
+            'EvWhenEnd' => 'date|after_or_equal:today',
             'WhenDoHW' => 'date|after_or_equal:today',
             'id_Subject' => 'exists:subjects,id',
             'id_Theme' => 'exists:themes,id',
             'withGroup' => 'boolean'
         ]);
 
-        if( ! SubjectController::isUsersSubj($request->id_Subject) )
+        if( $request->id_Subject && ! SubjectController::isUsersSubj($request->id_Subject) )
             return response()->json("Это не ваш предмет",404);
-        elseif( ! ThemeController::isUsersThem($request->id_Theme) )
+        elseif( $request->id_Theme && ! ThemeController::isUsersThem($request->id_Theme) )
             return response()->json("Это не ваша тема",404);
 
         AboutEvent::create([
@@ -87,9 +87,9 @@ class EventController extends Controller
             'id_Theme' => 'exists:themes,id'
         ]);
 
-        if( ! SubjectController::isUsersSubj($request->id_Subject) )
+        if( $request->id_Subject && ! SubjectController::isUsersSubj($request->id_Subject) )
             return response()->json("Это не ваш предмет",404);
-        elseif( ! ThemeController::isUsersThem($request->id_Theme) )
+        elseif( $request->id_Theme && ! ThemeController::isUsersThem($request->id_Theme) )
             return response()->json("Это не ваша тема",404);
 
         if( $event->id_User === auth()->user()->id  ) {

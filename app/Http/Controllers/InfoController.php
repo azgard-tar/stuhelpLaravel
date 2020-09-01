@@ -76,7 +76,7 @@ class InfoController extends Controller
                 ], // /api/auth/login123
                 [
                     "url"        => ("/api/auth/registration"),
-                    "description"=> "Регистрация нового пользователя",
+                    "description"=> "Регистрация нового пользователя. После регистрации нужно подтвердить почту. ",
                     "group"      => "user",
                     "method"     => "POST",
                     "urlParam"   => null,
@@ -98,13 +98,35 @@ class InfoController extends Controller
                     ],
                     "response"   => [
                         "200"      => [
-                            "message"     => "Successfully registration!"
+                            "message"     => "Вы успешно зарегистрировались! На вашу почту было отправлено сообщение для подтверждения."
                         ],
                         "401"      => [
                             "error"       => "Текст ошибки"
                         ]
                     ]
                 ], // /api/auth/registration
+                [
+                    "url"        => ("/api/auth/recover"),
+                    "description"=> "Восстановление доступа к аккаунту. На почту отправится сообщение для смены пароля. ",
+                    "group"      => "user",
+                    "method"     => "POST",
+                    "urlParam"   => null,
+                    "queryParam" => null,
+                    "bodyParam"  => [
+                        "email"    => [
+                            "required"    => true,
+                            "description" => "Почта юзера"
+                        ],
+                    ],
+                    "response"   => [
+                        "200"      => [
+                            "message"     => "Письмо для смены пароля было отправлено! Проверьте ваше почту"
+                        ],
+                        "401"      => [
+                            "error"       => "Текст ошибки"
+                        ]
+                    ]
+                ], // /api/auth/recover
             ]
         ];
         if( auth()->check() ){

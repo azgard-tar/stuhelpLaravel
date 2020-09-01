@@ -98,7 +98,7 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'success' => true, 'data'=> ['message'=> 'Письмо для смены пароля было отправлено! Проверте ваше почту']
+            'success' => true, 'data'=> ['message'=> 'Письмо для смены пароля было отправлено! Проверьте ваше почту']
         ]);
     }
 
@@ -244,7 +244,7 @@ class AuthController extends Controller
         );
 
 
-        return response()->json(['message' => 'Successfully registration! Please verify your email address.'],200);
+        return response()->json(['message' => 'Вы успешно зарегистрировались! На вашу почту было отправлено сообщение для подтверждения.'],200,null, JSON_UNESCAPED_UNICODE);
     }
 
     public function me()

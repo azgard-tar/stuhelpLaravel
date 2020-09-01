@@ -90,7 +90,7 @@ class SubjectController extends Controller
             'global' => 'boolean'
         ]);
 
-        if( ! DisciplineController::isUsersDisc($request->id_Discipline) )
+        if( $request->id_Discipline && ! DisciplineController::isUsersDisc($request->id_Discipline) )
             return response()->json("Это не ваша дисциплина",404);
         if( $this->checkName($request) !== "ok" )
             return response()->json("У вас уже есть предмет с таким названием",400);

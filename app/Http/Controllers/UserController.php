@@ -29,6 +29,9 @@ class UserController extends Controller
             'id_City' => 'exists:cities,id',
             'id_Country' => 'exists:countries,id'
         ]);
+        if( !is_null($request->Avatar) ){
+            $this->userUploadImage( $request );
+        }
         auth()->user()->update( $request->except(
             ['Privilege','Login','email_verified_at','created_at','updated_at','LastLogin','Avatar','id_Group','id']) 
         );
