@@ -104,7 +104,7 @@ class EventController extends Controller
     {
         if( $event->id_User === auth()->user()->id ) {
             $event->delete();
-            return response()->json( null, 203 );
+            return response()->json( null, 204 );
         }
         else 
             return response()->json( ["error" => "Это не ваше событие"], 403 );   

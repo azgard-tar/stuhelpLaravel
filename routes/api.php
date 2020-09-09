@@ -58,7 +58,6 @@ Route::group([
 
         Route::post('discipline','DisciplineController@addDisc'); // C
         Route::get('discipline','DisciplineController@getUserDisc'); // R
-        Route::get('discipline/{discipline}','DisciplineController@isUsersDisc');
         Route::put('discipline/{discipline}','DisciplineController@updateDisc'); // U
         Route::delete('discipline/{discipline}','DisciplineController@deleteDisc'); // D
 
@@ -97,9 +96,11 @@ Route::group([
     if( auth()->check() && ( 2 <= auth()->user()->Privilege 
     && 4 >= auth()->user()->Privilege ) ){ // headman, moder, admin
         Route::get('/','InfoController@headmanInfo');
-        Route::put('group', 'GroupController@updateGroup');
+        //Route::put('group', 'GroupController@updateGroup');
 
         Route::get('grouprequests', 'GroupRequestsController@getList');
+        Route::get('grouprequests/users', 'GroupRequestsController@getListOfUsers');
+        Route::get('grouprequests/users/{id}', 'GroupRequestsController@getOneUser');
         Route::get('grouprequests/{grouprequest}', 'GroupRequestsController@applyRequest');
     }
 });
@@ -132,7 +133,7 @@ Route::group([
         Route::delete('country/{country}','CountryController@deleteCountry');
 
         Route::post('city','CityController@createCity');
-        Route::put('city/{city}','CityController@updateCity');
+        Route::put('city/{city}','CityController@updateCity');  
         Route::delete('city/{city}','CityController@deleteCity');
 
         //Route::get('discipline/{user}','DisciplineController@getUserDisc'); 
@@ -154,6 +155,7 @@ Route::group([
         Route::get('user', 'AdminController@getAll');
         //Route::put('update/{user}', 'AdminController@update');
         Route::delete('delete/{user}', 'AdminController@delete');
+        Route::post('moder/{user}','PrivilegeController@setModer');
 
         //Route::get('event/{user}','EventController@getUsersEvents');
 

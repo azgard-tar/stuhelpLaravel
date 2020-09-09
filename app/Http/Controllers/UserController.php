@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use App\City;
+use App\Country;
 use App\Http\Controllers\ImageController;
 
 class UserController extends Controller
@@ -29,6 +31,13 @@ class UserController extends Controller
             'id_City' => 'exists:cities,id',
             'id_Country' => 'exists:countries,id'
         ]);
+
+        
+        $city = City::find( $request->id_City ?? auth()->user()->id_City );
+        $country = Country::find( $request->id_Country ?? auth()->user()->id_Country );
+        if( !is_null( $city ) && !is_null( $country ) && $city->id_Country != $country->id )
+            return response()->json(["error" => $city->ru_Name . " не из этой страны( " . $country->ru_Name . " )"],400);
+
         if( !is_null($request->Avatar) ){
             $this->userUploadImage( $request );
         }

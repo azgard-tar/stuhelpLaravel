@@ -14,12 +14,15 @@ class GroupController extends Controller
             'id_University' => 'exists:universities,id'
         ]);
         $group = Groups::find( $Rgroup->id ?? auth()->user()->id_Group );
-        $headm = User::find( $group->id_Headman );
-        $uni = University::find( $group->id_University );
-        $group->university = $uni->ru_Name ?? null;
-        $group->headman = $headm->Login;
-        unset( $group->id_University, $group->id_Headman );
-        return response()->json( $group, 200 );
+        if( $group ){
+            $headm = User::find( $group->id_Headman );
+            $uni = University::find( $group->id_University );
+            $group->university = $uni->ru_Name ?? null;
+            $group->headman = $headm->Login;
+            unset( $group->id_University, $group->id_Headman );
+            return response()->json( $group, 200 );
+        }
+        return response()->json(["error" => "У вас нет группы"],403);
     }
     // search group 
     public function searchGroup( Request $request ){
@@ -44,18 +47,17 @@ class GroupController extends Controller
     }
     // get students
     public function getGroupStudents( Request $request, Groups $group = null ){
-        if( auth()->user()->id_Group || $group->id )
+        $currentId = ( is_null( $group ) ) ? auth()->user()->id_Group : $group->id;
+        if( $currentId )
             return response()->json( [
-                        "Students" => Groups::where(
-                            'id',
-                            $group->id ?? auth()-user()->id_Group 
-                        )->select(
-                            'name','Surname', 'Login', 'email', 'id_Group', 'Avatar'
-                        ),
-                        "Info" => Groups::find( $group->id ?? auth()-user()->id_Group )                        
+                        "Students" => User::where(
+                            'id_Group',
+                            $currentId 
+                        )->get(["Login","name","Surname","email"]),
+                        "Info" => Groups::find( $currentId  )                        
                 ], 200 
             );
-        return response()->json("У вас нет группы",403);
+        return response()->json(["error" => "У вас нет группы"],403);
     }
     // get group
     public function getGroups(){
@@ -92,7 +94,7 @@ class GroupController extends Controller
             'id_University' => 'exists:universities,id'
         ]);
         $currentGroup = Groups::find( $group->id ?? auth()->user()->id_Group );
-        $currentGroup->update($request->except('id'));            
+        $currentGroup->update($request->except('id','id_Headman'));            
         return response()->json( $currentGroup, 200 );
     }
     // delete 

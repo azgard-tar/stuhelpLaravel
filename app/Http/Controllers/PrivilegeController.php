@@ -39,14 +39,8 @@ class PrivilegeController extends Controller
             "id_Group" => "exists:groups,id"
         ]);
         $groupId = $request->id_Group ?? $user->id_Group;
-        // искать старосту из группы человека
-        if( $groupId && User::where( 'id_Group', $groupId )->where('Privilege',2) )
-            if( auth()->user()->Privilege == 4 )
-                User::where( 'id_Group', $groupId )->where('Privilege',2)->update(["Privilege" => 1]);
-            else
-                return response()->json("У этой группы уже есть староста", 400);
-        elseif( ! $groupId )
-            return response()->json("Укажите группу( параметр id_Group )", 400);
+
+        User::where( 'id_Group', $groupId )->where('Privilege',2)->update(["Privilege" => 1]);
         
         $group = Groups::find( $groupId );
         $group->id_Headman = $user->id;
@@ -54,6 +48,18 @@ class PrivilegeController extends Controller
         
         $user->id_Group = $groupId;
         $user->Privilege = 2;
+        $user->save();
+        
+        return response()->json($user,200);
+    }
+
+    public function setModer( Request $request, User $user ){
+        if( $user->id == auth()->user()->id || $user->Privilege == 4 )
+            return response()->json("Не нужно снижать права админов!",400 );
+        if( $user->Privilege == 2 )
+            return response()->json("Староста не может быть модером. Смените старосту группы",400 );
+
+        $user->Privilege = 3;
         $user->save();
         
         return response()->json($user,200);

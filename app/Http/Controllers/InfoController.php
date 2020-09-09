@@ -1424,38 +1424,6 @@ class InfoController extends Controller
     public function headmanInfo(){
         $ret = ["data"=>[
             [
-                "url"        => ("/api/headman/group"),
-                "description"=> "Изменить информацию о своей группе",
-                "group"      => "group",
-                "method"     => "PUT",
-                "authReq"    => true,
-                "urlParam"   => null,
-                "queryParam" => null,                    
-                "bodyParam"  => [
-                    "id_Headman" => [
-                        "required" => false,
-                        "type" => "int",
-                        "description" => "id нового старосты группы"
-                    ],
-                    "id_University" => [
-                        "required" => false,
-                        "type" => "int",
-                        "description" => "id нового университета группы"
-                    ]
-                ],
-                "response"   => [
-                    "200"  =>  [
-                        "id"        => 1,
-                        "Name"      => "271",
-                        "university"=> "ЧНУ",
-                        "headman"   => "Petya"
-                    ],
-                    "400" =>   [ 
-                        "error"   => "Unauthorized"
-                    ]
-                ]
-            ], // /api/headman/group - PUT
-            [
                 "url"        => "/api/headman/grouprequests/{id}",
                 "description"=> "Принять заявку на вступление",
                 "group"      => "group",

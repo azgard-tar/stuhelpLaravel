@@ -6,21 +6,48 @@ use Illuminate\Http\Request;
 use App\GroupRequests;
 use App\Groups;
 use App\User;
+use Illuminate\Support\Facades\DB;
 
 class GroupRequestsController extends Controller
 {
     // get list ( h, m, a )
     public function getList( Request $request ){
         $group = Groups::find( $request->user()->id_Group );
+        if( is_null( $group ) )
+            return response()->json("Вы не состоите в группе",400);
         if( $group->id_Headman == $request->user()->id )
-            return response()->json( 
-                GroupRequests::where(
-                    'id_Group', $request->user()->id_Group 
-                )->get(), 200 
+            return response()->json(
+                    DB::table('group_requests')
+                        ->where( 'group_requests.id_Group','=', $request->user()->id_Group )
+                        ->join('users','group_requests.id_User','=','users.id')
+                        ->select('group_requests.id as id_Request','users.id','users.name','users.Surname')
+                        ->get()
+                , 200 
             );
         else
             return response()->json('Вы не староста этой группы', 403);
     }
+    public function getListOfUsers( ){
+        return response()->json( 
+            User::findMany(
+                GroupRequests::where(
+                    'id_Group', $request->user()->id_Group 
+                )->get( 'id_User' )
+            ), 200 
+        );
+    }
+
+    public function getOneUser( User $id ){
+        return response()->json( 
+            User::whereIn( 
+                'id',
+                GroupRequests::where(
+                    'id_Group', $request->user()->id_Group 
+                )->get( 'id_User' )
+            )->where('id', $id)->get(), 200 
+        );
+    }
+    
     // get all ( m , a )
     public function getAll( ){
         return response()->json( GroupRequests::all() , 200 );

@@ -48,9 +48,10 @@ class DisciplineController extends Controller
             'global', true
         )->get();
         foreach( $ret as $el )
-            if( mb_strtolower(trim($el->ru_Name )) == mb_strtolower(trim($request->ru_Name )) 
-             || mb_strtolower(trim($el->eng_Name)) == mb_strtolower(trim($request->eng_Name)) )
-                return "no";
+            if( !is_null( $request->ru_Name )  && mb_strtolower(trim($el->ru_Name )) == mb_strtolower(trim($request->ru_Name ) ) )
+                return "ru_Name";
+            elseif( !is_null( $request->eng_Name ) && mb_strtolower(trim($el->eng_Name)) == mb_strtolower(trim($request->eng_Name) ) )
+                return "eng_Name";
         return "ok";
     }
 
@@ -63,7 +64,7 @@ class DisciplineController extends Controller
         ]);
 
         if( $this->checkName($request) !== "ok" )
-            return response()->json("У вас уже есть дисциплина с таким названием",400);
+            return response()->json("У вас уже есть дисциплина с таким названием",400,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
 
         $discipline = new Discipline;
         $discipline->ru_Name = $request->ru_Name;
@@ -81,12 +82,17 @@ class DisciplineController extends Controller
             'global' => 'boolean'
         ]);
 
-        if( $this->checkName($request) !== "ok" )
-            return response()->json("У вас уже есть дисциплина с таким названием",400);
+        //if( $this->checkName($request) !== "ok" )
+        //    return response()->json("У вас уже есть дисциплина с таким названием",400,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
 
         if( $discipline->id_User === auth()->user()->id  ) {
             if( auth()->user()->Privilege < 3 )
-                $discipline->update( $request->except(['id_User','id_Group','global','id']) );
+                if( is_null( $request->ru_Name) || $this->checkName($request) === "ru_Name" )
+                    $discipline->update( $request->except(['id_User','id_Group','global','id','ru_Name']) );
+                elseif( is_null( $request->eng_Name) || $this->checkName($request) === "eng_Name" )
+                    $discipline->update( $request->except(['id_User','id_Group','global','id','eng_Name']) );
+                else
+                    $discipline->update( $request->except(['id_User','id_Group','global','id']) );
             elseif( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 )
                 $discipline->update( $request->except(['id_User','id_Group','id']) );
             return response()->json( $discipline, 200 );
@@ -103,6 +109,6 @@ class DisciplineController extends Controller
             return response()->json( null, 203 );
         }
         else 
-            return response()->json( "Вы не владелец", 403 );   
+            return response()->json( "Вы не владелец", 403, ["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE );   
     }
 }

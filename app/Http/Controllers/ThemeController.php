@@ -50,9 +50,10 @@ class ThemeController extends Controller
             'global', true
         )->get();
         foreach( $ret as $el )
-            if( mb_strtolower(trim($el->ru_Name )) == mb_strtolower(trim($request->ru_Name )) 
-             || mb_strtolower(trim($el->eng_Name)) == mb_strtolower(trim($request->eng_Name)) )
-                return "no";
+            if( !is_null( $request->ru_Name )  && mb_strtolower(trim($el->ru_Name )) == mb_strtolower(trim($request->ru_Name ) ) )
+                return "ru_Name";
+            elseif( !is_null( $request->eng_Name ) && mb_strtolower(trim($el->eng_Name)) == mb_strtolower(trim($request->eng_Name) ) )
+                return "eng_Name";
         return "ok";
     }
 
@@ -68,7 +69,7 @@ class ThemeController extends Controller
         if( ! SubjectController::isUsersSubj( $request->id_Subject ) )
             return response()->json("Это не ваш предмет",404);
         if( $this->checkName($request) !== "ok" )
-            return response()->json("У вас уже есть тема с таким названием",400);
+            return response()->json("У вас уже есть тема с таким названием",400,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
         
         $theme = new Theme;
         $theme->ru_Name = $request->ru_Name;
@@ -90,17 +91,22 @@ class ThemeController extends Controller
 
         if( ! SubjectController::isUsersSubj($request->id_Subject) )
             return response()->json("Это не ваш предмет",404);
-        if( $this->checkName($request) !== "ok" )
-            return response()->json("У вас уже есть тема с таким названием",400);
+        //if( $this->checkName($request) !== "ok" )
+        //    return response()->json("У вас уже есть тема с таким названием",400,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
 
         if( $theme->id_User === auth()->user()->id  ) {
-            $theme->update( $request->except(['id_User','id_Group','global','id']) );
+            if( is_null( $request->ru_Name) || $this->checkName($request) === "ru_Name" )
+                $theme->update( $request->except(['id_User','id_Group','global','id','ru_Name']) );
+            elseif( is_null( $request->eng_Name) || $this->checkName($request) === "eng_Name" )
+                $theme->update( $request->except(['id_User','id_Group','global','id','eng_Name']) );
+            else
+                $theme->update( $request->except(['id_User','id_Group','global','id']) );
             if( auth()->user()->Privilege == 3 || auth()->user()->Privilege == 4 )
                 $theme->update( $request->except(['id_User','id_Group','id']) );
             return response()->json( $theme, 200 );
         }
         else 
-            return response()->json( "You are not owner of it", 403 );   
+            return response()->json( "Вы не владелец", 403,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE );   
     }
     // delete
 
@@ -111,6 +117,6 @@ class ThemeController extends Controller
             return response()->json( null, 203 );
         }
         else 
-            return response()->json( "You are not owner of it", 403 );   
+            return response()->json( "Вы не владелец", 403,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE );   
     }
 }

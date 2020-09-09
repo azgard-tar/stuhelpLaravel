@@ -244,7 +244,7 @@ class AuthController extends Controller
         );
 
 
-        return response()->json(['message' => 'Вы успешно зарегистрировались! На вашу почту было отправлено сообщение для подтверждения.'],200,null, JSON_UNESCAPED_UNICODE);
+        return response()->json(['message' => 'Вы успешно зарегистрировались! На вашу почту было отправлено сообщение для подтверждения.'],200,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
     }
 
     public function me()
