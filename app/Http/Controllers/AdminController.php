@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use App\Http\Controllers\ImageController;
+use Illuminate\Database\Eloquent\Collection;
 
 class AdminController extends Controller
 {
@@ -34,9 +35,41 @@ class AdminController extends Controller
         return response()->json( $user, 200 );
     }
 
+    public function searchUser( Request $request ){
+        $request->validate(
+            [
+                'name' => 'string',
+                'Surname' => 'string',
+                'Login' => 'string',
+                'id_City' => 'exists:cities,id|integer',
+                'id_Country' => 'exists:countries,id|integer',
+                'Privilege' => 'integer'
+            ]
+        );
+
+        if( $request->name )
+            return response()->json(User::where('name', 'like', '%'.$request->name.'%')->get(),200);
+        elseif( $request->Surname )
+            return response()->json(User::where('Surname', 'like', '%'.$request->Surname.'%')->get(),200);
+        elseif( $request->Login )
+            return response()->json(User::where('Login', 'like', '%'.$request->Login.'%')->get(),200);
+        elseif( $request->id_City )
+            return response()->json(User::where('id_City', $request->id_City )->get(),200);
+        elseif( $request->id_Country )
+            return response()->json(User::where('id_Country', $request->id_Country)->get(),200);
+        elseif( $request->Privilege )
+            return response()->json(User::where('Privilege', $request->Privilege)->get(),200);
+        else
+            return response()->json("Данные не найдены",403,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
+    }
+
     public function delete( User $user ){
-        $user->delete();
-        return response()->json(  null, 204 );
+        if( $user->Privilege != 4){
+            $user->delete();
+            return response()->json(  null, 204 );
+        }
+        else
+            return response()->json("Вы не можете удалять админов",400,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
     }
 
     public function adminGetImage( Request $request, User $user )

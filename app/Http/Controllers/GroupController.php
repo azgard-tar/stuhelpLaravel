@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Groups;
 use App\User;
 use App\University;
+use App\Http\Controllers\PrivilegeController;
 class GroupController extends Controller
 {
     // beautifull response - without id
@@ -22,7 +23,7 @@ class GroupController extends Controller
             unset( $group->id_University, $group->id_Headman );
             return response()->json( $group, 200 );
         }
-        return response()->json(["error" => "У вас нет группы"],403);
+        return response()->json(["error" => "У вас нет группы"],403,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
     }
     // search group 
     public function searchGroup( Request $request ){
@@ -42,7 +43,7 @@ class GroupController extends Controller
                 ,200
             );
         } else{
-            return response()->json("Нет данных",403);
+            return response()->json("Нет данных",403,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
         }
     }
     // get students
@@ -53,15 +54,18 @@ class GroupController extends Controller
                         "Students" => User::where(
                             'id_Group',
                             $currentId 
-                        )->get(["Login","name","Surname","email"]),
+                        )->get(["id","Login","name","Surname","email"]),
                         "Info" => Groups::find( $currentId  )                        
                 ], 200 
             );
-        return response()->json(["error" => "У вас нет группы"],403);
+        return response()->json(["error" => "У вас нет группы"],403,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
     }
     // get group
     public function getGroups(){
         return response()->json( Groups::all(), 200 );
+    }
+    public function getOneGroup( Groups $group){
+        return response()->json( Groups::find( $group->id ), 200 );
     }
 
     // create
@@ -72,8 +76,8 @@ class GroupController extends Controller
         ]);
 
         $user = User::find($request->id_Headman);
-        if( is_null( $user->id_Group ) ){
-            return response()->json("Указанный юзер уже состоит в группе",400);
+        if( !is_null( $user->id_Group ) ){
+            return response()->json("Указанный юзер уже состоит в группе",400,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
         }
         $group = new Groups;
         $group->Name = $request->Name;
@@ -88,14 +92,29 @@ class GroupController extends Controller
         return response()->json( Groups::find($group->id),200);
     }
     // update
-    public function updateGroup( Request $request, Groups $group = null ){
+    public function updateGroup( Request $request, Groups $group ){
         $request->validate([
             'id_Headman' => 'exists:users,id',
             'id_University' => 'exists:universities,id'
         ]);
-        $currentGroup = Groups::find( $group->id ?? auth()->user()->id_Group );
-        $currentGroup->update($request->except('id','id_Headman'));            
-        return response()->json( $currentGroup, 200 );
+        if( !is_null( $request->id_Headman ) ){
+            $authPriv = auth()->user()->Privilege;
+            $user = User::find( $request->id_Headman );
+            if( 
+                ( $authPriv == 3 || $authPriv == 4 ) && /* Если это админ/модер */
+                ( $user->id == auth()->user()->id || /* И он пытается стать старостой */
+                $user->Privilege == 3 || $user->Privilege == 4 ) /* Или сделать старостой другого админа/модера */
+            )
+                return response()->json("Модер или админ не может быть старостой",400); // то нельзя
+
+            User::where( 'id_Group', $group->id )->where('Privilege',2)->update(["Privilege" => 1]);
+            
+            $user->id_Group = $group->id;
+            $user->Privilege = 2;
+            $user->save();
+        }
+        $group->update($request->except('id'));            
+        return response()->json( $group, 200 );
     }
     // delete 
     public function deleteGroup( Request $request, Groups $group ){

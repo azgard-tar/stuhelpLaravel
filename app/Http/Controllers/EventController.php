@@ -52,6 +52,10 @@ class EventController extends Controller
         elseif( $request->id_Theme && ! ThemeController::isUsersThem($request->id_Theme) )
             return response()->json("Это не ваша тема",404);
 
+        
+        // type == 0 - личный ивент
+        // type == 1 - пара в универе
+
         AboutEvent::create([
             'Name'          => $request->Name,
             'Description'   => $request->Description,

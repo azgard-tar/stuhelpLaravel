@@ -113,16 +113,21 @@ Route::group([
         Route::get('/','InfoController@moderInfo');
         Route::get('group/students/{group}', 'GroupController@getGroupStudents');
         Route::get('group', 'GroupController@getGroups');
+        Route::get('group/{group}', 'GroupController@getOneGroup');
         Route::post('group', 'GroupController@createGroup');
         Route::put('group/{group}', 'GroupController@updateGroup');
         Route::delete('group/{group}', 'GroupController@deleteGroup');
 
         Route::get('group/{Rgroup}','GroupController@beautifulGet');
 
+        Route::get('users', 'AdminController@getAll');
+        Route::get('users/{user}', 'AdminController@getOne');
+        Route::get('searchusers','AdminController@searchUser');
+
         //Route::get('grouprequests', 'GroupRequestsController@getAll');
         //Route::delete('grouprequests/{grouprequests}', 'GroupRequestsController@deleteRequest');
 
-        Route::post('headman/{user}','PrivilegeController@setHeadman');
+        //Route::post('headman/{user}','PrivilegeController@setHeadman');
 
         Route::post('university','UniversityController@createUni');
         Route::put('university/{university}','UniversityController@updateUni');
@@ -146,16 +151,13 @@ Route::group([
 });
 
 Route::group([
-    'prefix' => 'admin',
-    'middleware' => 'verified'
+    'prefix' => 'admin'
 ], function () {
     if( auth()->check() && 4 == auth()->user()->Privilege ){ // for admins
         Route::get('/','InfoController@adminInfo');
-        Route::get('user/{user}', 'AdminController@getOne');
-        Route::get('user', 'AdminController@getAll');
         //Route::put('update/{user}', 'AdminController@update');
         Route::delete('delete/{user}', 'AdminController@delete');
-        Route::post('moder/{user}','PrivilegeController@setModer');
+        Route::get('moder/{user}','PrivilegeController@setModer');
 
         //Route::get('event/{user}','EventController@getUsersEvents');
 
