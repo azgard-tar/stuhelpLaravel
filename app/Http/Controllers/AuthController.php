@@ -34,11 +34,11 @@ class AuthController extends Controller
 
         try {
             if (! $token = auth()->attempt($credentials)) {
-                return response()->json(['success' => false, 'error' => 'We cant find an account with this credentials. Please make sure you entered the right information and you have verified your email address.'], 404);
+                return response()->json(['success' => false, 'error' => 'Мы не можем найти вашу почту. Пожалуйста, проверьте правильность введённой информации.'], 404, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
             }
             
         } catch (JWTException $e) {
-            return response()->json(['success' => false, 'error' => 'Failed to login, please try again.'], 500);
+            return response()->json(['success' => false, 'error' => 'Ошибка авторизации, повторите ещё раз'], 500, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
         }
 
         date_default_timezone_set("Europe/Kiev");
@@ -73,7 +73,7 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
         if (!$user) {
             $error_message = "Ваша почта не найдена.";
-            return response()->json(['success' => false, 'error' => ['email'=> $error_message]], 401);
+            return response()->json(['success' => false, 'error' => ['email'=> $error_message]], 400, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
         }
 
         try {
@@ -98,7 +98,8 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'success' => true, 'data'=> ['message'=> 'Письмо для смены пароля было отправлено! Проверьте ваше почту']
+            'success' => true, 'data'=> ['message'=> 'Письмо для смены пароля было отправлено! Проверьте ваше почту'],
+            400, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE
         ]);
     }
 
@@ -124,7 +125,7 @@ class AuthController extends Controller
                 return response()->json([
                     'success'=> false,
                     'message'=> 'Пароли не совпадают'
-                ]);
+                ],400, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
             }
 
             $inputs = [
@@ -158,7 +159,8 @@ class AuthController extends Controller
             ],200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
         }
 
-        return response()->json(['success'=> false, 'error'=> "Токен неверный"], 400, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
+        return response()->json(['success'=> false, 'error'=> "Токен неверный"], 
+        400, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
 
     }
 
@@ -172,29 +174,29 @@ class AuthController extends Controller
             if($user->is_verified == 1){
                 return response()->json([
                     'success'=> true,
-                    'message'=> 'Account already verified..'
-                ]);
+                    'message'=> 'Аккаунт уже подтвержден'
+                ],
+                400, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
             }
             
             $user->update(['is_verified' => 1]);
             DB::table('user_verifications')->where('token',$verification_code)->delete();
 
             return response()->json([
-                'success'=> true,
-                'message'=> 'You have successfully verified your email address.'
-            ]);
+                    'success'=> true,
+                    'message'=> 'Вы успешно подтвердили свой аккаунт!'
+                ],
+                400, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE
+            );
         }
 
-        return response()->json(['success'=> false, 'error'=> "Verification code is invalid."]);
+        return response()->json(['success'=> false, 'error'=> "Код верификации неверный"],
+        400, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
 
     }
 
     public function registration()
     {
-        //$login = request('login');
-        //$email = request('email');
-        //$password = request('password');
-
         $inputs = [
             'Login'    => request('login'),
             'email'    => request('email'),
@@ -242,9 +244,19 @@ class AuthController extends Controller
                 $mail->subject($subject);
             }
         );
-
-
         return response()->json(['message' => 'Вы успешно зарегистрировались! На вашу почту было отправлено сообщение для подтверждения.'],200,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
+    }
+
+    public function sendMail( Request $request ){
+        Mail::send('mailToAdmin', ['name' => $request->name, 'text' => $request->text],
+            function($mail) use( $request ){
+                $mail->from( $request->email, $request->name );
+                $mail->to(getenv('MAIL_FROM_ADDRESS'), "Stuhelp");
+                $mail->subject($request->subject);
+            }
+        );
+
+        return response()->json("Отправленно",200,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
     }
 
     public function me()
@@ -256,7 +268,7 @@ class AuthController extends Controller
     {
         auth()->logout();
 
-        return response()->json(['message' => 'Successfully logged out'],200);
+        return response()->json(['message' => 'Успешно вышли'],200);
     }
 
     public function refresh()

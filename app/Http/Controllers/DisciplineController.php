@@ -81,10 +81,6 @@ class DisciplineController extends Controller
         $request->validate([
             'global' => 'boolean'
         ]);
-
-        //if( $this->checkName($request) !== "ok" )
-        //    return response()->json("У вас уже есть дисциплина с таким названием",400,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
-
         if( $discipline->id_User === auth()->user()->id  ) {
             if( auth()->user()->Privilege < 3 )
                 if( is_null( $request->ru_Name) || $this->checkName($request) === "ru_Name" )

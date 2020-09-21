@@ -27,6 +27,7 @@ Route::group([
     Route::get('login123', 'AuthController@loginTest')->name('login123');
     Route::post('registration', 'AuthController@registration');
     Route::post('recover', 'AuthController@recover');
+    Route::post('mailToAdmin','AuthController@sendMail');
     if( auth()->check() ){
         Route::get('logout', 'AuthController@logout');
         Route::get('refresh', 'AuthController@refresh');

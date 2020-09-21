@@ -105,7 +105,7 @@ class GroupController extends Controller
                 ( $user->id == auth()->user()->id || /* И он пытается стать старостой */
                 $user->Privilege == 3 || $user->Privilege == 4 ) /* Или сделать старостой другого админа/модера */
             )
-                return response()->json("Модер или админ не может быть старостой",400); // то нельзя
+                return response()->json("Модер или админ не может быть старостой",400,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE); // то нельзя
 
             User::where( 'id_Group', $group->id )->where('Privilege',2)->update(["Privilege" => 1]);
             

@@ -22,7 +22,7 @@ class ImageController extends Controller
         $currentUser = User::findOrFail( ( is_null($user) ) ? auth()->user()->id : $user->id );
         if( $request->hasFile('Avatar')){
             $request->validate([
-                'Avatar' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'Avatar' => 'image|mimes:jpeg,png,jpg,svg|max:2048',
             ]);
             if( file_exists( storage_path('app/') . $currentUser->Avatar ) && $currentUser->Avatar !== 'images/none.jpg' )
                 unlink( storage_path('app/') . $currentUser->Avatar );
@@ -30,6 +30,6 @@ class ImageController extends Controller
             $currentUser->save();
             return response()->file( storage_path('app/') . $currentUser->Avatar );
         }
-        return response()->json(['error' => 'Data not found'],404);
+        return response()->json(['error' => 'Данные не найдены'],404);
     }
 }

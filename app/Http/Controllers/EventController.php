@@ -19,7 +19,7 @@ class EventController extends Controller
         !is_null( $event->id_Group ) && $event->id_Group === auth()->user()->id_Group  
             ) ? 
             response()->json( $event, 200 ) : 
-            response()->json( "This event is not for you", 403 );   
+            response()->json( "Это не ваше событие", 403,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE );   
     }
 
     public function getUsersEvents( Request $request, User $user = null)
@@ -48,9 +48,9 @@ class EventController extends Controller
         ]);
 
         if( $request->id_Subject && ! SubjectController::isUsersSubj($request->id_Subject) )
-            return response()->json("Это не ваш предмет",404);
+            return response()->json("Это не ваш предмет",404,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
         elseif( $request->id_Theme && ! ThemeController::isUsersThem($request->id_Theme) )
-            return response()->json("Это не ваша тема",404);
+            return response()->json("Это не ваша тема",404,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
 
         
         // type == 0 - личный ивент
@@ -92,16 +92,17 @@ class EventController extends Controller
         ]);
 
         if( $request->id_Subject && ! SubjectController::isUsersSubj($request->id_Subject) )
-            return response()->json("Это не ваш предмет",404);
+            return response()->json("Это не ваш предмет",404,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
         elseif( $request->id_Theme && ! ThemeController::isUsersThem($request->id_Theme) )
-            return response()->json("Это не ваша тема",404);
+            return response()->json("Это не ваша тема",404,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
 
         if( $event->id_User === auth()->user()->id  ) {
             $event->update( $request->except('id_User','id_Group','id') );
             return response()->json( $event, 200 );
         }
         else 
-            return response()->json( ["error" => "Это не ваше событие"], 403 );   
+            return response()->json( ["error" => "Это не ваше событие"], 
+            403,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE );   
     }
     // delete
     public function deleteEvent( Request $request, AboutEvent $event )
@@ -111,6 +112,6 @@ class EventController extends Controller
             return response()->json( null, 204 );
         }
         else 
-            return response()->json( ["error" => "Это не ваше событие"], 403 );   
+            return response()->json( ["error" => "Это не ваше событие"], 403 ,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);   
     }
 }
