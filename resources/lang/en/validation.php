@@ -41,7 +41,7 @@ return [
     'distinct' => 'The :attribute field has a duplicate value.',
     'email' => ':attribute должно быть почтой.', //
     'ends_with' => 'The :attribute must end with one of the following: :values.',
-    'exists' => ':attribute - такого значения не существует.', //
+    'exists' => ':attribute - Не существует.', //
     'file' => ':attribute - должен быть файлом.', //
     'filled' => 'The :attribute field must have a value.',
     'gt' => [

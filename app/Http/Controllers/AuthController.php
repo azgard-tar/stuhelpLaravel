@@ -22,21 +22,27 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
         
         $rules = [
-            'email' => 'required|email',
+            'email' => 'required|email|exists:users,email',
             'password' => 'required',
+        ];
+
+        $messages = [
+            'email.required' => "Введите почту",
+            'email.exists' => "Неправильная почта либо пароль",
+            'email' => "Неправильная форма почты",
+            'password.required' => "Введите пароль"
         ];
 
         $validation = \Validator::make( $credentials, $rules );
 
         if($validation->fails()) {
-            return response()->json(['success'=> false, 'error'=> $validation->messages()], 401);
+            return response()->json([ "error" => $validation->messages()->first() ], 401);
         }
 
         try {
-            if (! $token = auth()->attempt($credentials)) {
-                return response()->json(['success' => false, 'error' => 'Мы не можем найти вашу почту. Пожалуйста, проверьте правильность введённой информации.'], 404, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
+            if ( ! $token = auth()->attempt($credentials) ) {
+                return response()->json([ 'error' => 'Почта либо пароль неверные. Пожалуйста, проверьте правильность введённой информации.'], 404, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
             }
-            
         } catch (JWTException $e) {
             return response()->json(['success' => false, 'error' => 'Ошибка авторизации, повторите ещё раз'], 500, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
         }
@@ -84,10 +90,14 @@ class AuthController extends Controller
 
             $subject = "Сброс пароля.";
             Mail::send('reset', ['name' => $name, 'verification_code' => $verification_code],
-                function($mail) use ($email, $name, $subject){
-                    $mail->from(getenv('MAIL_FROM_ADDRESS'), "Stuhelp");
-                    $mail->to($email, $name);
-                    $mail->subject($subject);
+                function($mail) use ($email, $name, $subject, $verification_code){
+                    $mail->from(getenv('MAIL_FROM_ADDRESS'), "Stuhelp")
+                    ->to($email, $name)
+                    ->subject($subject)
+                    ->addPart('Привет, '.$name.'.
+                    Это сообщение было отправлено с сайта stuhelp.site, так как вы решили сменить ваш пароль. Если нет - можете начинать беспокоится.
+                    Cкопируйте ее в адресную строку браузера, чтобы сменить пароль:
+                    https://stuhelp.site/api/user/password/'.$verification_code);
                 }
             );
 
@@ -204,8 +214,8 @@ class AuthController extends Controller
         ];
     
         $rules = [
-            'Login'    => 'required|unique:users|max:64',
-            'email'    => 'required|email',
+            'Login'    => 'required|unique:users|max:64|min:3',
+            'email'    => 'required|email|unique:users',
             'password' => [
                 'required',
                 'string',
@@ -216,8 +226,21 @@ class AuthController extends Controller
                 'regex:/[@$!%*#?&]/', 
             ],
         ];
+
+        $messages = [
+            'Login.unique' => "Пользователь с таким логином уже существует",
+            'Login.required' => "Введите логин",
+            'Login.max' => "Логин слишком длинный. Максимальный размер - 64 символа",
+            'Login.min' => "Логин слишком короткий. Минимальный размер - 3 символа",
+            'email.required' => "Введите почту",
+            'email.unique' => "Пользователь с такой почтой уже существует",
+            'email.email' => "Неправильная форма почты",
+            'password.required' => "Введите пароль",
+            'password.regex' => "Неверный формат пароля.",
+            'password.min' => "Пароль слишком короткий. Минимальный размер - 6 символов",
+        ];
     
-        $validation = \Validator::make( $inputs, $rules );
+        $validation = \Validator::make( $inputs, $rules , $messages );
     
         if ( $validation->fails() ) {
             return response()->json(['error' => $validation->errors()->all() ],401);
@@ -233,15 +256,16 @@ class AuthController extends Controller
         $name = $user->Login;
         $email = $user->email;
 
-        $verification_code = Str::random(30); //Generate verification code
+        $verification_code = Str::random(30);
         DB::table('user_verifications')->insert(['user_id'=>$user->id,'token'=>$verification_code]);
 
-        $subject = "Please verify your email address.";
+        $subject = "Пожалуйста, подтвердите свою почту.";
         Mail::send('verify', ['name' => $name, 'verification_code' => $verification_code],
-            function($mail) use ($email, $name, $subject){
-                $mail->from(getenv('MAIL_FROM_ADDRESS'), "Stuhelp");
-                $mail->to($email, $name);
-                $mail->subject($subject);
+            function($mail) use ($email, $name, $subject, $verification_code){
+                $mail->from(getenv('MAIL_FROM_ADDRESS'), "Stuhelp")
+                ->to($email, $name)
+                ->subject($subject)
+                ->addPart('Привет, '.$name.'.Спасибо за регистрацию на сайте stuhelp.site! Не забудь закончить регистрацию в своем профиле.Cкопируйте ссылку в адресную строку браузера, чтобы подтвердить свой адрес электронной почты: https://stuhelp.site/api/user/verify/'.$verification_code);
             }
         );
         return response()->json(['message' => 'Вы успешно зарегистрировались! На вашу почту было отправлено сообщение для подтверждения.'],200,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
@@ -279,8 +303,10 @@ class AuthController extends Controller
     protected function respondWithToken($token)
     {
         return response()->json([
+            'success' => true,
             'access_token' => $token,
             'token_type' => 'bearer',
+            'message' => 'Успешная авторизация',
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);
     }

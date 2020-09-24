@@ -43,7 +43,10 @@ class GroupController extends Controller
                 ,200
             );
         } else{
-            return response()->json("Нет данных",403,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
+            if( is_null( $request->id_University ) )
+                return response()->json(["error" => "Укажите университет"],403,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
+            else if( is_null( $request->Name ) )
+                return response()->json(["error" => "Укажите название группы"],403,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
         }
     }
     // get students
@@ -71,13 +74,19 @@ class GroupController extends Controller
     // create
     public function createGroup( Request $request ){
         $request->validate([
-            'id_Headman' => 'exists:users,id',
+            'Name' => 'required',
+            'id_Headman' => 'required|exists:users,id',
             'id_University' => 'exists:universities,id'
+        ],[
+            'Name.required' => 'Введите название группы',
+            'id_Headman.required' => 'Выберите юзера',
+            'id_Headman.exists' => 'Такого юзера не существует',
+            'id_University.exists' => 'Такого университета не существует'
         ]);
 
         $user = User::find($request->id_Headman);
         if( !is_null( $user->id_Group ) ){
-            return response()->json("Указанный юзер уже состоит в группе",400,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
+            return response()->json(["error" => "Указанный юзер уже состоит в группе"],400,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
         }
         $group = new Groups;
         $group->Name = $request->Name;
@@ -105,7 +114,7 @@ class GroupController extends Controller
                 ( $user->id == auth()->user()->id || /* И он пытается стать старостой */
                 $user->Privilege == 3 || $user->Privilege == 4 ) /* Или сделать старостой другого админа/модера */
             )
-                return response()->json("Модер или админ не может быть старостой",400,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE); // то нельзя
+                return response()->json(["error"=>"Модер или админ не может быть старостой"],400,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE); // то нельзя
 
             User::where( 'id_Group', $group->id )->where('Privilege',2)->update(["Privilege" => 1]);
             

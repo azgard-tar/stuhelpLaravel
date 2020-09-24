@@ -60,11 +60,26 @@ class SubjectController extends Controller
     // create
     public function addSubj( Request $request )
     {
-        $request->validate([
-            'id_Discipline' => 'exists:disciplines,id',
+        $rules = [
+            'ru_Name'  => 'required|min:5',
+            'eng_Name' => 'min:5',
+            'id_Discipline' => 'required|exists:disciplines,id',
             'global' => 'boolean',
             'withGroup' => 'boolean'
-        ]);
+        ];
+        $messages = [
+            "id_Discipline.required" => "Укажите дисциплину",
+            "id_Discipline.exists" => "Такой дисциплины не существует. Перезагрузите страницу.",
+            "ru_Name.required" => "Укажите название предмета",
+            "ru_Name.min" => "Минимальная длина названия составляет 5 символов",
+            "eng_Name.min" => "Минимальная длина описания составляет 5 символов"
+        ];
+
+        $validation = \Validator::make( $request->all(), $rules, $messages );
+
+        if($validation->fails()) {
+            return response()->json([ "error" => $validation->messages()->first() ], 401);
+        }
 
         if( ! DisciplineController::isUsersDisc($request->id_Discipline) )
             return response()->json("Это не ваша дисциплина",404);
@@ -86,10 +101,24 @@ class SubjectController extends Controller
     // update
     public function updateSubj( Request $request, Subject $subject )
     {
-        $request->validate([
+        $rules = [
+            'ru_Name'  => 'min:5',
+            'eng_Name' => 'min:5',
             'id_Discipline' => 'exists:disciplines,id',
-            'global' => 'boolean'
-        ]);
+            'global' => 'boolean',
+            'withGroup' => 'boolean'
+        ];
+        $messages = [
+            "ru_Name.min" => "Минимальная длина названия составляет 5 символов",
+            "id_Discipline.exists" => "Такой дисциплины не существует. Перезагрузите страницу.",
+            "eng_Name.min" => "Минимальная длина описания составляет 5 символов"
+        ];
+
+        $validation = \Validator::make( $request->all(), $rules, $messages );
+
+        if($validation->fails()) {
+            return response()->json([ "error" => $validation->messages()->first() ], 401);
+        }
 
         if( $request->id_Discipline && ! DisciplineController::isUsersDisc($request->id_Discipline) )
             return response()->json("Это не ваша дисциплина",404,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);

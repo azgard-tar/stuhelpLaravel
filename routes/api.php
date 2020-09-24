@@ -73,7 +73,7 @@ Route::group([
         Route::delete('theme/{theme}','ThemeController@deleteTheme'); // D
 
         Route::get('group/students', 'GroupController@getGroupStudents');
-        Route::post('grouprequests/{group}', 'GroupRequestsController@createRequest');
+        Route::post('grouprequests/{id}', 'GroupRequestsController@createRequest');
         Route::delete('grouprequests', 'GroupRequestsController@deleteRequest');
         Route::get('searchgroup','GroupController@searchGroup');
         Route::get('group','GroupController@beautifulGet'); // get info without id_Uni...

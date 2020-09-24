@@ -60,16 +60,31 @@ class ThemeController extends Controller
     // create
     public function addTheme( Request $request )
     {
-        $request->validate([
-            'id_Subject' => 'exists:subjects,id',
+        $rules = [
+            'ru_Name'  => 'required|min:5',
+            'eng_Name' => 'min:5',
+            'id_Subject' => 'required|exists:subjects,id',
             'global' => 'boolean',
             'withGroup' => 'boolean'
-        ]);
+        ];
+        $messages = [
+            "id_Subject.required" => "Укажите предмет",
+            "id_Subject.exists" => "Такого предмета не существует. Перезагрузите страницу",
+            "ru_Name.required" => "Укажите название темы",
+            "ru_Name.min" => "Минимальная длина названия составляет 5 символов",
+            "eng_Name.min" => "Минимальная длина описания составляет 5 символов"
+        ];
+
+        $validation = \Validator::make( $request->all(), $rules, $messages );
+
+        if($validation->fails()) {
+            return response()->json([ "error" => $validation->messages()->first() ], 401);
+        }
 
         if( ! SubjectController::isUsersSubj( $request->id_Subject ) )
-            return response()->json("Это не ваш предмет",404);
+            return response()->json([ "error" => "Это не ваш предмет"],404, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
         if( $this->checkName($request) !== "ok" )
-            return response()->json("У вас уже есть тема с таким названием",400,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
+            return response()->json(["error" => "У вас уже есть тема с таким названием"],400,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
         
         $theme = new Theme;
         $theme->ru_Name = $request->ru_Name;
@@ -84,13 +99,27 @@ class ThemeController extends Controller
     // update
     public function updateTheme( Request $request, Theme $theme )
     {
-        $request->validate([
+        $rules = [
+            'ru_Name'  => 'min:5',
+            'eng_Name' => 'min:5',
             'id_Subject' => 'exists:subjects,id',
-            'global' => 'boolean'
-        ]);
+            'global' => 'boolean',
+            'withGroup' => 'boolean'
+        ];
+        $messages = [
+            "ru_Name.min" => "Минимальная длина названия составляет 5 символов",
+            "id_Subject.exists" => "Такого предмета не существует. Перезагрузите страницу",
+            "eng_Name.min" => "Минимальная длина описания составляет 5 символов"
+        ];
+
+        $validation = \Validator::make( $request->all(), $rules, $messages );
+
+        if($validation->fails()) {
+            return response()->json([ "error" => $validation->messages()->first() ], 401);
+        }
 
         if( ! SubjectController::isUsersSubj($request->id_Subject) )
-            return response()->json("Это не ваш предмет",404);
+            return response()->json("Это не ваш предмет",404, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
         //if( $this->checkName($request) !== "ok" )
         //    return response()->json("У вас уже есть тема с таким названием",400,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
 

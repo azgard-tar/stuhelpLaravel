@@ -23,6 +23,10 @@ class ImageController extends Controller
         if( $request->hasFile('Avatar')){
             $request->validate([
                 'Avatar' => 'image|mimes:jpeg,png,jpg,svg|max:2048',
+            ],[
+                "mimes" => "Расширение файла не поддерживается",
+                "max"   => "Размер файла слишком большой",
+                "image" => "Файл должен быть картинкой"
             ]);
             if( file_exists( storage_path('app/') . $currentUser->Avatar ) && $currentUser->Avatar !== 'images/none.jpg' )
                 unlink( storage_path('app/') . $currentUser->Avatar );
@@ -30,6 +34,6 @@ class ImageController extends Controller
             $currentUser->save();
             return response()->file( storage_path('app/') . $currentUser->Avatar );
         }
-        return response()->json(['error' => 'Данные не найдены'],404);
+        return response()->json(['error' => 'Картинка не найдена'],404);
     }
 }

@@ -12,8 +12,17 @@ class CityController extends Controller
         return response()->json(City::find( $city->id), 200 );
     }
     // get all
-    public function getAllCity(){
-        return response()->json( City::all(), 200 );
+    public function getAllCity( Request $request ){
+        if( is_null($request->id_Country) )
+            return response()->json( City::all(), 200 );
+        else{
+            $request->validate([
+                "id_Country" => "exists:countries,id"
+            ],[
+                "id_Country.exists" => "Выберите существующую страну"
+            ]);
+            return response()->json( City::where( 'id_Country', $request->id_Country )->get() ,200 );
+        }
     }
     // create
     public function createCity( Request $request ){

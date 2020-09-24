@@ -38,14 +38,34 @@ class EventController extends Controller
     public function addEvent( Request $request )
     {
 
-        $request->validate([
-            'EvWhen' => 'date|after_or_equal:today',
-            'EvWhenEnd' => 'date|after_or_equal:today',
-            'WhenDoHW' => 'date|after_or_equal:today',
+        $rules = [
+            'Name' => 'required|string',
+            'Description' => 'required|string',
+            'EvWhen' => 'required|date|after_or_equal:now',
+            'EvWhenEnd' => 'required|date|after:EvWhen',
+            'WhenDoHW' => 'date|after_or_equal:now',
             'id_Subject' => 'exists:subjects,id',
             'id_Theme' => 'exists:themes,id',
-            'withGroup' => 'boolean'
-        ]);
+            'withGroup' => 'boolean',
+            'EvType' => 'required|integer',
+            'Color'  => 'required'
+        ];
+        $messages = [
+            "Name.required" => "Введите название события",
+            "Description.required" => "Введите описание события",
+            "Name.string" => "Название события должно быть строкой",
+            "Description.string" => "Описание события должно быть строкой",
+            "after_or_equal" => "Дата должна начинаться с сегодняшнего дня",
+            "EvWhenEnd.after" => "Дата конца должна идти после даты начала",
+            "date" => "Ошибка формата даты",
+            "Color.required" => "Укажите цвет",
+            "EvType.required" => "Укажите тип"
+        ];
+
+        $validation = \Validator::make( $request->all(), $rules, $messages );
+
+        if($validation->fails()) 
+            return response()->json([ "error" => $validation->messages()->first() ], 401);
 
         if( $request->id_Subject && ! SubjectController::isUsersSubj($request->id_Subject) )
             return response()->json("Это не ваш предмет",404,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
@@ -83,18 +103,40 @@ class EventController extends Controller
     // update
     public function updateEvent( Request $request, AboutEvent $event )
     {
-        $request->validate([
-            'EvWhen' => 'date|after_or_equal:today',
-            'EvWhenEnd' => 'date|after:EvWhen',
-            'WhenDoHW' => 'date|after_or_equal:today',
+        
+        $rules = [
+            'Name' => 'required|string',
+            'Description' => 'required|string',
+            'EvWhen' => 'required|date|after_or_equal:' . date($event->EvWhen),
+            'EvWhenEnd' => 'required|date|after:EvWhen',
+            'WhenDoHW' => 'date|after_or_equal:EvWhen',
             'id_Subject' => 'exists:subjects,id',
-            'id_Theme' => 'exists:themes,id'
-        ]);
+            'id_Theme' => 'exists:themes,id',
+            'withGroup' => 'boolean',
+            'EvType' => 'required|integer',
+            'Color'  => 'required'
+        ];
+        $messages = [
+            "Name.required" => "Введите название события",
+            "Description.required" => "Введите описание события",
+            "Name.string" => "Название события должно быть строкой",
+            "Description.string" => "Описание события должно быть строкой",
+            "after_or_equal" => "Дата должна начинаться с прошлой установленной даты",
+            "EvWhenEnd.after" => "Дата конца должна идти после даты начала",
+            "date" => "Ошибка формата даты",
+            "Color.required" => "Укажите цвет",
+            "EvType.required" => "Укажите тип"
+        ];
+
+        $validation = \Validator::make( $request->all(), $rules, $messages );
+
+        if($validation->fails()) 
+            return response()->json([ "error" => $validation->messages()->first() ], 401);
 
         if( $request->id_Subject && ! SubjectController::isUsersSubj($request->id_Subject) )
-            return response()->json("Это не ваш предмет",404,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
+            return response()->json([ "error" => "Это не ваш предмет"],404,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
         elseif( $request->id_Theme && ! ThemeController::isUsersThem($request->id_Theme) )
-            return response()->json("Это не ваша тема",404,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
+            return response()->json([ "error" => "Это не ваша тема"],404,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
 
         if( $event->id_User === auth()->user()->id  ) {
             $event->update( $request->except('id_User','id_Group','id') );

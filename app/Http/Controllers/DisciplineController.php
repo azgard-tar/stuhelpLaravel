@@ -58,13 +58,26 @@ class DisciplineController extends Controller
     // create
     public function addDisc( Request $request )
     {
-        $request->validate([
+        $rules = [
+            'ru_Name'  => "required|min:5",
+            'eng_Name' => 'min:5',
             'global' => 'boolean',
             'withGroup' => 'boolean'
-        ]);
+        ];
+        $messages = [
+            "ru_Name.required" => "Укажите название дисциплины",
+            "ru_Name.min" => "Минимальная длина названия составляет 5 символов",
+            "eng_Name.min" => "Минимальная длина описания составляет 5 символов"
+        ];
+
+        $validation = \Validator::make( $request->all(), $rules, $messages );
+
+        if($validation->fails()) {
+            return response()->json([ "error" => $validation->messages()->first() ], 401);
+        }
 
         if( $this->checkName($request) !== "ok" )
-            return response()->json("У вас уже есть дисциплина с таким названием",400,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
+            return response()->json(["error" => "У вас уже есть дисциплина с таким названием" ],400,["Content-type" => "application/json"], JSON_UNESCAPED_UNICODE);
 
         $discipline = new Discipline;
         $discipline->ru_Name = $request->ru_Name;
@@ -78,9 +91,23 @@ class DisciplineController extends Controller
     // update
     public function updateDisc( Request $request, Discipline $discipline )
     {        
-        $request->validate([
-            'global' => 'boolean'
-        ]);
+        $rules = [
+            'ru_Name'  => 'min:5',
+            'eng_Name' => 'min:5',
+            'global' => 'boolean',
+            'withGroup' => 'boolean'
+        ];
+        $messages = [
+            "ru_Name.min" => "Минимальная длина названия составляет 5 символов",
+            "eng_Name.min" => "Минимальная длина описания составляет 5 символов"
+        ];
+
+        $validation = \Validator::make( $request->all(), $rules, $messages );
+
+        if($validation->fails()) {
+            return response()->json([ "error" => $validation->messages()->first() ], 401);
+        }
+
         if( $discipline->id_User === auth()->user()->id  ) {
             if( auth()->user()->Privilege < 3 )
                 if( is_null( $request->ru_Name) || $this->checkName($request) === "ru_Name" )
